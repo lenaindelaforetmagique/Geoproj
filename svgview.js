@@ -59,13 +59,13 @@ SVGView.prototype.init = function(sourceShapes) {
 
   // Water
   let water = new Polygon(1);
-  for (let lon = -180; lon <= 180; lon += 10) {
+  for (let lon = -180; lon <= 180; lon += 1) {
     water.points.push(new Point(lon, -90));
   }
   for (let lat = -90; lat <= 90; lat += 1) {
     water.points.push(new Point(180, lat));
   }
-  for (let lon = 180; lon >= -180; lon -= 10) {
+  for (let lon = 180; lon >= -180; lon -= 1) {
     water.points.push(new Point(lon, 90));
   }
   for (let lat = 90; lat >= -90; lat -= 1) {
