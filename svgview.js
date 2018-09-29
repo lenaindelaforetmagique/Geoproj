@@ -14,6 +14,7 @@ SVGView = function(sourceShapes) {
   this.polygons = [];
 
   this.svg = null;
+  this.svg2 = null;
   this.viewBox = null;
 
   this.iProjection = 0;
@@ -34,6 +35,10 @@ SVGView.prototype.init = function(sourceShapes) {
 
   thiz.svg = document.createElementNS(svgNS, "svg");
   document.body.appendChild(thiz.svg);
+  thiz.svg2 = document.createElementNS(svgNS, "svg");
+  thiz.svg2.setAttributeNS(null, 'id', "legend");
+
+  document.body.appendChild(thiz.svg2);
   thiz.viewBox = new ViewBox(thiz.svg);
 
   // Create lines
@@ -132,6 +137,7 @@ SVGView.prototype.update = function() {
 SVGView.prototype.draw = function() {
   var thiz = this;
   removeDOMChildren(thiz.svg);
+  removeDOMChildren(thiz.svg2);
 
   // draw shapes
   for (let i = 0; i < thiz.polygons.length; i++) {
@@ -144,17 +150,17 @@ SVGView.prototype.draw = function() {
   }
 
   // draw title
-  console.log(thiz.projTitle);
-
   let svgObj = document.createElementNS(svgNS, 'text');
+  let col = 'rgba(0,0,0,0.7)';
 
-  let col = 'rgba(50,50,50,0.6)';
-
+  svgObj.setAttributeNS(null, "x", 0);
+  svgObj.setAttributeNS(null, "y", 30);
+  svgObj.setAttributeNS(null, "font-size", "30px");
   svgObj.setAttributeNS(null, "style", "fill:" + col);
   svgObj.setAttributeNS(null, "stroke", 'black');
   svgObj.setAttributeNS(null, "stroke-width", "0.01");
   svgObj.textContent = thiz.projTitle;
-  thiz.svg.appendChild(svgObj);
+  thiz.svg2.appendChild(svgObj);
 
 
 }
