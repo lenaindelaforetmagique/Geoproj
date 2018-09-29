@@ -17,6 +17,7 @@ SVGView = function(sourceShapes) {
   this.viewBox = null;
 
   this.iProjection = 0;
+  this.projTitle = "";
 
   this.lastUpdate = Date.now();
 
@@ -71,9 +72,7 @@ SVGView.prototype.init = function(sourceShapes) {
   for (let lat = 90; lat >= -90; lat -= 1) {
     water.points.push(new Point(-180, lat));
   }
-
   thiz.polygons.push(water);
-
 
   // Loading shapes
   for (let i = 0; i < sourceShapes.length; i++) {
@@ -97,6 +96,8 @@ SVGView.prototype.changeProj = function(incr) {
   while (thiz.iProjection < 0) {
     thiz.iProjection += ListOfProjections.length;
   }
+
+  thiz.projTitle = thiz.projectionFunction().name;
 
   // console.log(thiz.projectionFunction);
   // console.log(ListOfProjections);
@@ -131,8 +132,6 @@ SVGView.prototype.update = function() {
 SVGView.prototype.draw = function() {
   var thiz = this;
   removeDOMChildren(thiz.svg);
-  // console.log("draw");
-
 
   // draw shapes
   for (let i = 0; i < thiz.polygons.length; i++) {
@@ -143,6 +142,21 @@ SVGView.prototype.draw = function() {
   for (let i = 0; i < thiz.lines.length; i++) {
     thiz.svg.appendChild(thiz.lines[i].svg());
   }
+
+  // draw title
+  console.log(thiz.projTitle);
+
+  let svgObj = document.createElementNS(svgNS, 'text');
+
+  let col = 'rgba(50,50,50,0.6)';
+
+  svgObj.setAttributeNS(null, "style", "fill:" + col);
+  svgObj.setAttributeNS(null, "stroke", 'black');
+  svgObj.setAttributeNS(null, "stroke-width", "0.01");
+  svgObj.textContent = thiz.projTitle;
+  thiz.svg.appendChild(svgObj);
+
+
 }
 
 
