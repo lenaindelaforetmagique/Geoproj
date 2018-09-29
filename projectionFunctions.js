@@ -26,8 +26,9 @@ var ListOfProjections = [
     let e = (lambda - 0) / rho * Math.cos(phi);
 
     let y0 = (1 / Math.tan(phi1) - (1 / Math.tan(phi1) + phi1))
-    let x = 60 * (rho * Math.sin(e));
-    let y = -60 * (1 / Math.tan(phi1) - rho * Math.cos(e) - y0);
+    let k = 180 / Math.PI;
+    let x = k * (rho * Math.sin(e));
+    let y = -k * (1 / Math.tan(phi1) - rho * Math.cos(e) - y0);
 
     return [x, y];
   },

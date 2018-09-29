@@ -1,11 +1,14 @@
 // reading of .JSON file
-var requestURL = 'earth-coastlines-12.5%.json';
+//https://lenaindelaforetmagique.github.io/Geoproj/
+var requestURL = 'earth-coastlines-12.json';
 var request = new XMLHttpRequest();
 
 request.open('GET', requestURL);
 request.responseType = 'json';
 request.send();
 request.onload = function() {
+  console.log(request);
+  console.log(request.response);
   var coastlines = request.response;
   // see http://geojson.org/
   // coastlines : object
