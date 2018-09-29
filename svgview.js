@@ -220,7 +220,7 @@ SVGView.prototype.touchInput = function() {
   this.downPos = null;
   this.inputThreshold = 40;
 
-  this.input = new Input(this.svg);
+  this.input = new Input(dom);
 
   this.input.start = function(x, y) {
     thiz.downPos = {
@@ -232,8 +232,6 @@ SVGView.prototype.touchInput = function() {
   this.input.move = function(x, y) {
     if (thiz.downPos == null)
       return;
-
-    console.log("coucouc");
 
     var dx = x - thiz.downPos.x;
     var dy = y - thiz.downPos.y;
