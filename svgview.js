@@ -118,14 +118,13 @@ SVGView.prototype.changeProj = function(incr) {
   svgObj.setAttributeNS(null, "stroke-width", "0.01");
   svgObj.textContent = thiz.projTitle;
 
+  thiz.tbox = document.createElementNS(svgNS, 'tspan');
+  thiz.tbox.textContent = "description:";
+  thiz.tbox.setAttributeNS(null, "x", 0);
+  thiz.tbox.setAttributeNS(null, "dy", 30);
+  thiz.tbox.setAttributeNS(null, "font-size", "20px");
 
-  let tspan = document.createElementNS(svgNS, 'tspan');
-  tspan.textContent = "description:";
-  tspan.setAttributeNS(null, "x", 0);
-  tspan.setAttributeNS(null, "dy", 30);
-  tspan.setAttributeNS(null, "font-size", "20px");
-
-  svgObj.appendChild(tspan);
+  svgObj.appendChild(thiz.tbox);
   thiz.description.appendChild(svgObj);
 
 
@@ -223,6 +222,7 @@ SVGView.prototype.touchInput = function() {
   this.input = new Input(dom);
 
   this.input.start = function(x, y) {
+    thiz.tbox.textContent += "+";
     thiz.downPos = {
       x: x,
       y: y
@@ -260,6 +260,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.end = function() {
+    thiz.tbox.textContent += "-";
     thiz.downPos = null;
   };
 };
