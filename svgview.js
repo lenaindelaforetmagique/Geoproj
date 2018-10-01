@@ -35,11 +35,11 @@ SVGView.prototype.init = function(sourceShapes) {
 
   thiz.svg = document.createElementNS(svgNS, "svg");
   document.body.appendChild(thiz.svg);
+  thiz.viewBox = new ViewBox(thiz.svg);
 
+  // description box
   thiz.description = document.createElementNS(svgNS, "svg");
   document.body.appendChild(thiz.description);
-
-  thiz.viewBox = new ViewBox(thiz.svg);
 
   // Create lines
   // meridians
@@ -116,6 +116,8 @@ SVGView.prototype.changeProj = function(incr) {
   svgObj.setAttributeNS(null, "style", "fill:" + col);
   svgObj.setAttributeNS(null, "stroke", 'black');
   svgObj.setAttributeNS(null, "stroke-width", "0.01");
+  svgObj.setAttributeNS(null, "height", window.innerHeight);
+  svgObj.setAttributeNS(null, "viewwidth", window.innerWidth);
   svgObj.textContent = thiz.projTitle;
 
   thiz.tbox = document.createElementNS(svgNS, 'tspan');
@@ -123,14 +125,16 @@ SVGView.prototype.changeProj = function(incr) {
   thiz.tbox.setAttributeNS(null, "x", 0);
   thiz.tbox.setAttributeNS(null, "dy", 30);
   thiz.tbox.setAttributeNS(null, "font-size", "20px");
-
   svgObj.appendChild(thiz.tbox);
+
+  let legend = document.createElementNS(svgNS, 'tspan');
+  legend.setAttributeNS(null, "x", 5);
+  legend.setAttributeNS(null, "y", window.innerHeight - 5);
+  legend.setAttributeNS(null, "font-size", "15px");
+  legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows";
+  svgObj.appendChild(legend);
+
   thiz.description.appendChild(svgObj);
-
-
-  // change target points
-
-
 
   // lines
   for (let i = 0; i < thiz.lines.length; i++) {
@@ -219,7 +223,7 @@ SVGView.prototype.touchInput = function() {
   this.downPos = null;
   this.inputThreshold = 40;
 
-  this.input = new Input(dom);
+  this.input = new Input(document.body); // dom
 
   this.input.start = function(x, y) {
     thiz.tbox.textContent += "+";
@@ -236,27 +240,34 @@ SVGView.prototype.touchInput = function() {
     var dx = x - thiz.downPos.x;
     var dy = y - thiz.downPos.y;
 
-    if (Math.abs(dy) > Math.abs(dx)) {
-      // vertical : zoomIn / zoomOut
-      if (dy > thiz.inputThreshold) {
-        thiz.viewBox.zoomIn(thiz.downPos.x, thiz.downPos.y);
-        // thiz.input.end(); // stop input
-      } else if (dy < -thiz.inputThreshold) {
-        thiz.viewBox.zoomOut(thiz.downPos.x, thiz.downPos.y);
-        // thiz.input.end(); // stop input
-      }
-    } else {
-      // horizontal : change projection
-      if (dx > thiz.inputThreshold) {
-        thiz.changeProj(1);
-        // thiz.input.start(x, y); // reset for continuous input
-        thiz.input.end(); // stop input
-      } else if (dx < -thiz.inputThreshold) {
-        thiz.changeProj(-1);
-        // thiz.input.start(x, y); // reset for continuous input
-        thiz.input.end(); // stop input
-      }
-    }
+    thiz.downPos = {
+      x: x,
+      y: y
+    };
+
+    thiz.viewBox.translate(-dx, -dy);
+
+    // if (Math.abs(dy) > Math.abs(dx)) {
+    //   // vertical : zoomIn / zoomOut
+    //   if (dy > thiz.inputThreshold) {
+    //     thiz.viewBox.zoomIn(thiz.downPos.x, thiz.downPos.y);
+    //     // thiz.input.end(); // stop input
+    //   } else if (dy < -thiz.inputThreshold) {
+    //     thiz.viewBox.zoomOut(thiz.downPos.x, thiz.downPos.y);
+    //     // thiz.input.end(); // stop input
+    //   }
+    // } else {
+    //   // horizontal : change projection
+    //   if (dx > thiz.inputThreshold) {
+    //     thiz.changeProj(1);
+    //     // thiz.input.start(x, y); // reset for continuous input
+    //     thiz.input.end(); // stop input
+    //   } else if (dx < -thiz.inputThreshold) {
+    //     thiz.changeProj(-1);
+    //     // thiz.input.start(x, y); // reset for continuous input
+    //     thiz.input.end(); // stop input
+    //   }
+    // }
   };
 
   this.input.end = function() {
@@ -265,7 +276,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.scroll = function(x, y, scrollDy) {
-    let k = (1 + Math.abs(scrollDy) / 10) * 1.05;
+    let k = 1.1; //(1 + Math.abs(scrollDy) / 10) * 1.05;
     if (scrollDy > 0) {
       thiz.viewBox.zoomOut(x, y, k);
     } else {
@@ -333,6 +344,12 @@ ViewBox = function(parentSvg) {
     this.zoomIn(x, y, 1 / fact);
   }
 
+  this.translate = function(dx, dy) {
+    let domRect = this.parentSvg.getBoundingClientRect();
+    this.box[0] += dx / domRect.width * this.box[2];
+    this.box[1] += dy / domRect.height * this.box[3];
+    this.draw();
+  }
 
   this.resize = function() {
     // if (window.innerWidth > 700) {
