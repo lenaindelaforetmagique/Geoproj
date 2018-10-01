@@ -1,4 +1,5 @@
 Point = function(lam, phi) {
+  // lambda and phi in degrees
   this.lambda = lam;
   this.phi = phi;
 

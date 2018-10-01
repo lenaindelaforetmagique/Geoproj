@@ -33,15 +33,17 @@ var ListOfProjections = [
     return [x, y];
   },
 
-  // Gall_stereographic = function(coordinates) {
-  //   let lambda = coordinates[0];
-  //   let phi = coordinates[1] * Math.PI / 180;
-  //
-  //   let r = 1 * Math.pow(2, 0.5);
-  //   let x = r * lambda / Math.pow(2, 0.5);
-  //   let y = -45 * r * (1 + Math.pow(2, 0.5) / 2) * Math.tan(phi / 2);
-  //   return [x, y];
-  // },
+  Gall_stereographic = function(lambda, phi) {
+    lambda *= Math.PI / 180;
+    phi *= Math.PI / 180;
+
+    let sqr2 = Math.pow(2, 0.5);
+
+    let r = sqr2 * 180 / Math.PI;
+    let x = r * lambda / sqr2;
+    let y = -r * (1 + sqr2 / 2) * Math.tan(phi / 2);
+    return [x, y];
+  },
 
   Lambert_cylindrical = function(lambda, phi) {
     let x = lambda;
@@ -76,6 +78,22 @@ var ListOfProjections = [
     let r = 180 / (2 * Math.pow(2, 0.5));
     let x = r * 2 * Math.pow(2, 0.5) / Math.PI * (lambda - 0) * Math.cos(teta);
     let y = -r * Math.pow(2, 0.5) * Math.sin(teta);
+
+    return [x, y];
+  },
+
+  Stereographic = function(lambda, phi) {
+    phi = Math.max(phi, -80);
+    lambda *= Math.PI / 180;
+    phi *= Math.PI / 180;
+
+    let x_ = Math.cos(lambda) * Math.cos(phi);
+    let y_ = Math.sin(lambda) * Math.cos(phi);
+    let z_ = -Math.sin(phi);
+
+    let r = 180 / Math.PI;
+    let y = r * (x_ / (1 - z_) - 1);
+    let x = r * (y_ / (1 - z_) - 0);
 
     return [x, y];
   }
