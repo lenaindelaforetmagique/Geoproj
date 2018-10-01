@@ -210,6 +210,7 @@ SVGView.prototype.setupInput = function() {
 
   window.onresize = function(e) {
     thiz.viewBox.resize();
+    thiz.changeProj(0);
   }
 
   thiz.touchInput();
