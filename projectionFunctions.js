@@ -91,7 +91,7 @@ var ListOfProjections = [
     let y_ = Math.sin(lambda) * Math.cos(phi);
     let z_ = -Math.sin(phi);
 
-    let r = 180 / Math.PI;
+    let r = 90;
     let y = r * (x_ / (1 - z_) - 1);
     let x = r * (y_ / (1 - z_) - 0);
 
