@@ -18,13 +18,14 @@ SVGView = function(sourceShapes) {
   this.description = null;
 
   this.iProjection = 0;
+  this.projection = ListOfProjections[0];
   this.projTitle = "";
 
   this.lastUpdate = Date.now();
 
   this.init(sourceShapes);
   this.setupInput();
-  this.changeProj(0);
+  this.changeProj();
   this.setupUpdate();
 
 }
@@ -94,14 +95,28 @@ SVGView.prototype.init = function(sourceShapes) {
   }
 }
 
-SVGView.prototype.changeProj = function(incr) {
+SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta = 0) {
   var thiz = this;
+
+  // if (incr == 0 && dlambda == 0 && dphi == 0 && dtheta == 0) {
+  //   // reset
+  //   thiz.projection.lambda0 = 0;
+  //   thiz.projection.phi0 = 0;
+  //   thiz.projection.theta = 0;
+  // }
 
   thiz.iProjection += incr;
   while (thiz.iProjection < 0) {
     thiz.iProjection += ListOfProjections.length;
   }
-  thiz.projTitle = thiz.projectionFunction().name;
+  thiz.iProjection %= ListOfProjections.length;
+  thiz.projection = ListOfProjections[thiz.iProjection];
+
+  thiz.projection.lambda0 += dlambda;
+  thiz.projection.phi0 += dphi;
+  thiz.projection.theta += dtheta;
+  // thiz.projection.ct = Math.cos(thiz.projection.theta * Math.PI / 180);
+  // thiz.projection.st = Math.sin(thiz.projection.theta * Math.PI / 180);
 
   // change description
   removeDOMChildren(thiz.description);
@@ -118,32 +133,41 @@ SVGView.prototype.changeProj = function(incr) {
   svgObj.setAttributeNS(null, "stroke-width", "0.01");
   svgObj.setAttributeNS(null, "height", window.innerHeight);
   svgObj.setAttributeNS(null, "viewwidth", window.innerWidth);
-  svgObj.textContent = thiz.projTitle;
+  svgObj.textContent = thiz.projection.title;
 
-  thiz.tbox = document.createElementNS(svgNS, 'tspan');
-  thiz.tbox.textContent = "description:";
-  thiz.tbox.setAttributeNS(null, "x", 0);
-  thiz.tbox.setAttributeNS(null, "dy", 30);
-  thiz.tbox.setAttributeNS(null, "font-size", "20px");
-  svgObj.appendChild(thiz.tbox);
+  let tbox = document.createElementNS(svgNS, 'tspan');
+  tbox.textContent = thiz.projection.description();
+  tbox.setAttributeNS(null, "x", 0);
+  tbox.setAttributeNS(null, "dy", 20);
+  tbox.setAttributeNS(null, "font-size", "15px");
+  svgObj.appendChild(tbox);
+
+  for (let i = 0; i < thiz.projection.properties.length; i++) {
+    let tbox = document.createElementNS(svgNS, 'tspan');
+    tbox.textContent = thiz.projection.properties[i];
+    tbox.setAttributeNS(null, "x", 0);
+    tbox.setAttributeNS(null, "dy", 15);
+    tbox.setAttributeNS(null, "font-size", "15px");
+    svgObj.appendChild(tbox);
+  }
 
   let legend = document.createElementNS(svgNS, 'tspan');
   legend.setAttributeNS(null, "x", 5);
   legend.setAttributeNS(null, "y", window.innerHeight - 5);
   legend.setAttributeNS(null, "font-size", "15px");
-  legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows";
+  legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows + a/q + z/s + e/d";
   svgObj.appendChild(legend);
 
   thiz.description.appendChild(svgObj);
 
   // lines
   for (let i = 0; i < thiz.lines.length; i++) {
-    thiz.lines[i].changeProj(thiz.projectionFunction());
+    thiz.lines[i].project(thiz.projection.func);
   }
 
   // shapes
   for (let i = 0; i < thiz.polygons.length; i++) {
-    thiz.polygons[i].changeProj(thiz.projectionFunction());
+    thiz.polygons[i].project(thiz.projection.func);
   }
 }
 
@@ -191,10 +215,33 @@ SVGView.prototype.setupInput = function() {
   // }
 
   document.onkeydown = function(e) {
+    console.log(e.which);
     switch (e.which) {
-      // case 32: // space
-      //   thiz.changeProj();
-      //   break;
+      case 65: //a
+        thiz.changeProj(0, 1);
+        break;
+      case 81: //q
+        thiz.changeProj(0, -1);
+        break;
+      case 90: //z
+        thiz.changeProj(0, 0, 1);
+        break;
+      case 83: //s
+        thiz.changeProj(0, 0, -1);
+        break;
+      case 69: //e
+        thiz.changeProj(0, 0, 0, 1);
+        break;
+      case 68: //d
+        thiz.changeProj(0, 0, 0, -1);
+        break;
+
+        // case 82: //r (reset)
+        //   thiz.changeProj(0, 0, 0, 0);
+        //   break;
+
+        // case 32: // space
+        //   break;
       case 37: // left arrow
         thiz.changeProj(-1);
         break;
@@ -227,7 +274,7 @@ SVGView.prototype.touchInput = function() {
   this.input = new Input(document.body); // dom
 
   this.input.start = function(x, y) {
-    thiz.tbox.textContent += "+";
+    // thiz.tbox.textContent += "+";
     thiz.downPos = {
       x: x,
       y: y
@@ -272,7 +319,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.end = function() {
-    thiz.tbox.textContent += "-";
+    // thiz.tbox.textContent += "-";
     thiz.downPos = null;
   };
 
@@ -372,5 +419,5 @@ SVGView.prototype.projectionFunction = function() {
   // console.log("connard");
   // console.log(thiz.iProjection);
   // console.log(ListOfProjections);
-  return ListOfProjections[thiz.iProjection % ListOfProjections.length];
+  return ListOfProjections[thiz.iProjection % ListOfProjections.length].func;
 }

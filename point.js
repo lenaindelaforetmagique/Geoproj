@@ -1,7 +1,8 @@
 Point = function(lam, phi) {
   // lambda and phi in degrees
-  this.lambda = lam;
-  this.phi = phi;
+  // conversion here
+  this.lambda = lam; // * Math.PI / 180;
+  this.phi = phi; // * Math.PI / 180;
 
   //current coordinates
   this.xCur = 0;
@@ -51,7 +52,7 @@ Line = function(level) {
     }
   }
 
-  this.changeProj = function(projectionFunction) {
+  this.project = function(projectionFunction) {
     for (let i = 0; i < this.points.length; i += 1) {
       this.points[i].reProject(projectionFunction);
     }
@@ -89,7 +90,7 @@ Polygon = function(level) {
     }
   }
 
-  this.changeProj = function(projectionFunction) {
+  this.project = function(projectionFunction) {
     for (let i = 0; i < this.points.length; i += 1) {
       this.points[i].reProject(projectionFunction);
     }
