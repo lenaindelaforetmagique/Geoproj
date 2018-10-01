@@ -263,6 +263,16 @@ SVGView.prototype.touchInput = function() {
     thiz.tbox.textContent += "-";
     thiz.downPos = null;
   };
+
+  this.input.scroll = function(x, y, scrollDy) {
+    let k = (1 + Math.abs(scrollDy) / 10) * 1.05;
+    if (scrollDy > 0) {
+      thiz.viewBox.zoomOut(x, y, k);
+    } else {
+      thiz.viewBox.zoomIn(x, y, k);
+    }
+  };
+
 };
 
 
@@ -289,7 +299,6 @@ ViewBox = function(parentSvg) {
   this.parentSvg = parentSvg;
   this.box = [];
 
-  this.fact = 1.05;
   this.zoom = 1;
 
   this.update = function() {}
@@ -304,7 +313,7 @@ ViewBox = function(parentSvg) {
     this.draw();
   }
 
-  this.zoomIn = function(x, y) {
+  this.zoomIn = function(x, y, fact = 1.05) {
     let domRect = this.parentSvg.getBoundingClientRect();
     // console.log(domRect);
 
@@ -312,28 +321,16 @@ ViewBox = function(parentSvg) {
     let coorY = (y - domRect.top) / domRect.height * this.box[3] + this.box[1];
     // console.log('coordinates', coorX, coorY);
 
-    this.box[0] = coorX - (coorX - this.box[0]) / this.fact;
-    this.box[1] = coorY - (coorY - this.box[1]) / this.fact;
-    this.box[2] /= this.fact;
-    this.box[3] /= this.fact;
+    this.box[0] = coorX - (coorX - this.box[0]) / fact;
+    this.box[1] = coorY - (coorY - this.box[1]) / fact;
+    this.box[2] /= fact;
+    this.box[3] /= fact;
     // this.update();
     this.draw();
   }
 
-  this.zoomOut = function(x, y) {
-    let domRect = this.parentSvg.getBoundingClientRect();
-    // console.log(domRect);
-
-    let coorX = (x - domRect.left) / domRect.width * this.box[2] + this.box[0];
-    let coorY = (y - domRect.top) / domRect.height * this.box[3] + this.box[1];
-    // console.log('coordinates', coorX, coorY);
-
-    this.box[0] = coorX - (coorX - this.box[0]) * this.fact;
-    this.box[1] = coorY - (coorY - this.box[1]) * this.fact;
-    this.box[2] *= this.fact;
-    this.box[3] *= this.fact;
-    // this.update();
-    this.draw();
+  this.zoomOut = function(x, y, fact = 1.05) {
+    this.zoomIn(x, y, 1 / fact);
   }
 
 

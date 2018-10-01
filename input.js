@@ -26,6 +26,7 @@ Input = function(dom) {
   this.start = nop;
   this.move = nop;
   this.end = nop;
+  this.scroll = nop;
 
   var thiz = this;
 
@@ -42,6 +43,11 @@ Input = function(dom) {
   dom.addEventListener("mouseup", function(e) {
     e.preventDefault();
     thiz.end(e.clientX, e.clientY);
+  });
+
+  dom.addEventListener("wheel", function(e) {
+    e.preventDefault();
+    thiz.scroll(e.clientX, e.clientY, e.deltaY);
   });
 
   dom.addEventListener("touchstart", function(e) {
