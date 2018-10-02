@@ -1,19 +1,5 @@
 var nop = function() {};
 
-// var spyEvent = function(e) {
-//   console.log(e.type);
-//   changeBGColor();
-// }
-//
-// var changeBGColor = function() {
-//   let r = Math.floor(Math.random() * 255);
-//   let v = Math.floor(Math.random() * 255);
-//   let b = Math.floor(Math.random() * 255);
-//   document.body.setAttributeNS(null, "style", "background-color:" + `rgb(${r},${v},${b})`);
-// }
-
-
-
 Input = function(dom) {
 
   this.spyEvent = nop;
