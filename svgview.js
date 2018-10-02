@@ -262,7 +262,7 @@ SVGView.prototype.touchInput = function() {
   this.prevSize = null;
   // this.inputThreshold = 40;
 
-  this.input = new Input(document.body); // dom
+  this.input = new Input(dom); // dom
 
   this.input.spyEvent = function(e) {
     console.log(e.type);
