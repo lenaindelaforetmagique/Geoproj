@@ -298,6 +298,8 @@ SVGView.prototype.touchInput = function() {
       x += l_touches.clientX / n;
       y += l_touches.clientY / n;
     }
+    thiz.projection.title += `${n}, ${x}, ${y}`;
+    thiz.changeProj(0, 0, 0, 0);
     return {
       x: x,
       y: y
