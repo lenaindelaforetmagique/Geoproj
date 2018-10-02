@@ -338,6 +338,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_mouseup = function(e) {
+    thiz.changeProj(0, 0, 0, -1);
     thiz.input.resetPos();
   };
 
@@ -350,7 +351,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchstart = function(e) {
-    thiz.changeProj(0, 0, 0, 1);
+    thiz.changeProj(0, 0, 0, e.touches.length);
     let curPos = thiz.input.getTouchPos(e.touches);
     thiz.input.savePos(curPos.x, curPos.y);
 
