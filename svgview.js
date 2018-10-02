@@ -27,7 +27,6 @@ SVGView = function(sourceShapes) {
   this.setupInput();
   this.changeProj();
   this.setupUpdate();
-
 }
 
 
@@ -203,16 +202,7 @@ SVGView.prototype.draw = function() {
 
 SVGView.prototype.setupInput = function() {
   // all events behavior here
-
   var thiz = this;
-
-  // document.onclick = function(e) {
-  //   if (e.shiftKey) {
-  //     thiz.viewBox.zoomOut(e.clientX, e.clientY);
-  //   } else {
-  //     thiz.viewBox.zoomIn(e.clientX, e.clientY);
-  //   }
-  // }
 
   document.onkeydown = function(e) {
     console.log(e.which);
@@ -268,68 +258,132 @@ SVGView.prototype.touchInput = function() {
   var dom = this.svg;
   var thiz = this;
 
-  this.downPos = null;
-  this.inputThreshold = 40;
+  this.prevPos = null;
+  this.prevSize = null;
+  // this.inputThreshold = 40;
 
-  this.input = new Input(document.body); // dom
+  this.input = new Input(document); // dom
 
-  this.input.start = function(x, y) {
-    // thiz.tbox.textContent += "+";
-    thiz.downPos = {
+  this.input.savePos = function(x, y) {
+    thiz.prevPos = {
       x: x,
       y: y
     };
   };
+
+  this.input.resetPos = function() {
+    thiz.prevPos = null;
+  };
+
+  this.input.saveTouchSize = function(size) {
+    thiz.prevSize = size;
+  }
+  this.input.resetTouchSize = function() {
+    thiz.prevSize = null;
+  }
+
+  this.input.getTouchPos = function(l_touches) {
+    let x = 0;
+    let y = 0;
+    let n = l_touches.length;
+    for (let i = 0; i < n; i++) {
+      x += l_touches.clientX / n;
+      y += l_touches.clientY / n;
+    }
+    return {
+      x: x,
+      y: y
+    };
+  };
+
+  this.input.getTouchSize = function(l_touches) {
+    let lMax = 0;
+    let n = l_touches.length;
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        let l = Math.pow(l_touches[i].clientX - l_touches[j].clientX, 2);
+        l += Math.pow(l_touches[i].clientY - l_touches[j].clientY, 2);
+        lMax = Math.max(lMax, l);
+      }
+    }
+    return Math.pow(lMax, 0.5);
+  };
+
 
   this.input.move = function(x, y) {
-    if (thiz.downPos == null)
+    if (thiz.prevPos == null) {
       return;
-
-    var dx = x - thiz.downPos.x;
-    var dy = y - thiz.downPos.y;
-
-    thiz.downPos = {
-      x: x,
-      y: y
-    };
-
-    thiz.viewBox.translate(-dx, -dy);
-
-    // if (Math.abs(dy) > Math.abs(dx)) {
-    //   // vertical : zoomIn / zoomOut
-    //   if (dy > thiz.inputThreshold) {
-    //     thiz.viewBox.zoomIn(thiz.downPos.x, thiz.downPos.y);
-    //     // thiz.input.end(); // stop input
-    //   } else if (dy < -thiz.inputThreshold) {
-    //     thiz.viewBox.zoomOut(thiz.downPos.x, thiz.downPos.y);
-    //     // thiz.input.end(); // stop input
-    //   }
-    // } else {
-    //   // horizontal : change projection
-    //   if (dx > thiz.inputThreshold) {
-    //     thiz.changeProj(1);
-    //     // thiz.input.start(x, y); // reset for continuous input
-    //     thiz.input.end(); // stop input
-    //   } else if (dx < -thiz.inputThreshold) {
-    //     thiz.changeProj(-1);
-    //     // thiz.input.start(x, y); // reset for continuous input
-    //     thiz.input.end(); // stop input
-    //   }
-    // }
-  };
-
-  this.input.end = function() {
-    // thiz.tbox.textContent += "-";
-    thiz.downPos = null;
-  };
-
-  this.input.scroll = function(x, y, scrollDy) {
-    let k = 1.1; //(1 + Math.abs(scrollDy) / 10) * 1.05;
-    if (scrollDy > 0) {
-      thiz.viewBox.zoomOut(x, y, k);
     } else {
-      thiz.viewBox.zoomIn(x, y, k);
+      let dx = x - thiz.prevPos.x;
+      let dy = y - thiz.prevPos.y;
+      thiz.input.savePos(x, y);
+      thiz.viewBox.translate(-dx, -dy);
     }
+  };
+
+  this.input.zoom = function(x, y, k) {
+    thiz.viewBox.scale(x, y, k);
+  };
+
+
+
+  this.input.handle_mousedown = function(e) {
+    thiz.input.savePos(e.clientX, e.clientY);
+  };
+
+  this.input.handle_mousemove = function(e) {
+    thiz.input.move(e.clientX, e.clientY);
+  };
+
+  this.input.handle_mouseup = function(e) {
+    thiz.input.resetPos();
+  };
+
+  this.input.handle_wheel = function(e) {
+    let k = 1.1;
+    if (e.deltaY > 0) {
+      k = 1 / k;
+    }
+    thiz.input.zoom(e.clientX, e.clientY, k);
+  };
+
+  this.input.handle_touchstart = function(e) {
+    let curPos = thiz.input.getTouchPos(e.touches);
+    thiz.input.savePos(curPos.x, curPos.y);
+
+    let size = thiz.input.getTouchSize(e.touches);
+    thiz.input.saveTouchSize(size);
+  };
+
+  this.input.handle_touchmove = function(e) {
+    let curPos = thiz.input.getTouchPos(e.touches);
+    let dx = curPos.x - thiz.input.prevPos.x;
+    let dy = curPos.y - thiz.input.prevPos.y;
+    let size = thiz.input.getTouchSize(e.touches);
+
+    if (size > 0 && thiz.input.prevSize > 0) {
+      let k = size / thiz.input.prevSize;
+
+      thiz.input.move(curPos.x, curPos.y);
+      thiz.input.zoom(curPos.x, curPos.y, k);
+      thiz.input.saveTouchSize(size);
+
+    } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
+      thiz.changeProj(Math.sign(dx));
+    };
+  };
+
+  this.input.handle_touchend = function(e) {
+    thiz.input.resetPos();
+    thiz.input.resetTouchSize();
+  };
+
+  this.input.handle_touchcancel = function(e) {
+    thiz.input.handle_touchend();
+  };
+
+  this.input.handle_touchleave = function(e) {
+    thiz.input.handle_touchend();
   };
 
 };
@@ -358,8 +412,6 @@ ViewBox = function(parentSvg) {
   this.parentSvg = parentSvg;
   this.box = [];
 
-  this.zoom = 1;
-
   this.update = function() {}
 
   this.draw = function() {
@@ -372,24 +424,16 @@ ViewBox = function(parentSvg) {
     this.draw();
   }
 
-  this.zoomIn = function(x, y, fact = 1.05) {
+  this.scale = function(x, y, fact = 1) {
     let domRect = this.parentSvg.getBoundingClientRect();
-    // console.log(domRect);
-
     let coorX = (x - domRect.left) / domRect.width * this.box[2] + this.box[0];
     let coorY = (y - domRect.top) / domRect.height * this.box[3] + this.box[1];
-    // console.log('coordinates', coorX, coorY);
 
     this.box[0] = coorX - (coorX - this.box[0]) / fact;
     this.box[1] = coorY - (coorY - this.box[1]) / fact;
     this.box[2] /= fact;
     this.box[3] /= fact;
-    // this.update();
     this.draw();
-  }
-
-  this.zoomOut = function(x, y, fact = 1.05) {
-    this.zoomIn(x, y, 1 / fact);
   }
 
   this.translate = function(dx, dy) {
