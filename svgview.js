@@ -295,11 +295,9 @@ SVGView.prototype.touchInput = function() {
     let y = 0;
     let n = l_touches.length;
     for (let i = 0; i < n; i++) {
-      x += l_touches.clientX / n;
-      y += l_touches.clientY / n;
+      x += l_touches[i].clientX / n;
+      y += l_touches[i].clientY / n;
     }
-    thiz.projection.title += `${n}, ${x}, ${y}`;
-    thiz.changeProj(0, 0, 0, 0);
     return {
       x: x,
       y: y
@@ -358,15 +356,13 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchstart = function(e) {
-    thiz.projection.title += '(';
     let curPos = thiz.input.getTouchPos(e.touches);
     thiz.input.savePos(curPos.x, curPos.y);
-    thiz.projection.title += '-';
     let size = thiz.input.getTouchSize(e.touches);
     thiz.input.saveTouchSize(size);
-    thiz.projection.title += ')';
-    thiz.projection.title += curPos.x + ", " + curPos.y;
-    thiz.changeProj(0, 0, 0, 0);
+    // thiz.projection.title += ')';
+    // thiz.projection.title += curPos.x + ", " + curPos.y;
+    // thiz.changeProj(0, 0, 0, 0);
   };
 
   this.input.handle_touchmove = function(e) {
