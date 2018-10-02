@@ -32,57 +32,48 @@ Input = function(dom) {
   var thiz = this;
 
   dom.addEventListener("mousedown", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_mousedown(e); //start(e.clientX, e.clientY);
   });
 
   dom.addEventListener("mousemove", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_mousemove(e); //move(e.clientX, e.clientY);
   });
 
   dom.addEventListener("mouseup", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_mouseup(e); //end(e.clientX, e.clientY);
   });
 
   dom.addEventListener("wheel", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_wheel(e); //scroll(e.clientX, e.clientY, e.deltaY);
   });
 
 
   dom.addEventListener("touchstart", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_touchstart(e);
   });
 
   dom.addEventListener("touchmove", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_touchmove(e);
   });
 
   dom.addEventListener("touchend", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
     thiz.handle_touchend(e);
   });
 
   dom.addEventListener("touchcancel", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchcancel(e);
+    thiz.handle_touchend(e);
   });
 
   dom.addEventListener("touchleave", function(e) {
-    thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchleave(e);
+    thiz.handle_touchend(e);
   });
 };

@@ -316,7 +316,10 @@ SVGView.prototype.touchInput = function() {
         lMax = Math.max(lMax, l);
       }
     }
-    return Math.pow(lMax, 0.5);
+    lMax = Math.pow(lMax, 0.5);
+    thiz.projection.title += `${lMax}`;
+    thiz.changeProj(0, 0, 0, 0);
+    return lMax;
   };
 
 
@@ -358,16 +361,15 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchstart = function(e) {
+    thiz.input.spyEvent(e);
     let curPos = thiz.input.getTouchPos(e.touches);
     thiz.input.savePos(curPos.x, curPos.y);
     let size = thiz.input.getTouchSize(e.touches);
     thiz.input.saveTouchSize(size);
-    // thiz.projection.title += ')';
-    // thiz.projection.title += curPos.x + ", " + curPos.y;
-    // thiz.changeProj(0, 0, 0, 0);
   };
 
   this.input.handle_touchmove = function(e) {
+    thiz.input.spyEvent(e);
     let curPos = thiz.input.getTouchPos(e.touches);
     let dx = curPos.x - thiz.input.prevPos.x;
     let dy = curPos.y - thiz.input.prevPos.y;
@@ -386,18 +388,10 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchend = function(e) {
+    thiz.input.spyEvent(e);
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
   };
-
-  this.input.handle_touchcancel = function(e) {
-    thiz.input.handle_touchend();
-  };
-
-  this.input.handle_touchleave = function(e) {
-    thiz.input.handle_touchend();
-  };
-
 };
 
 
