@@ -59,7 +59,7 @@ Input = function(dom) {
 
   dom.addEventListener("touchmove", function(e) {
     e.preventDefault();
-    thiz.handle_touchstart(e); //move
+    thiz.handle_touchmove(e);
   });
 
   dom.addEventListener("touchend", function(e) {

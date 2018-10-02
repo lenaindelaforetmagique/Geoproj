@@ -127,7 +127,7 @@ SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta 
 
   svgObj.setAttributeNS(null, "x", 0);
   svgObj.setAttributeNS(null, "y", 30);
-  svgObj.setAttributeNS(null, "font-size", "30px");
+  svgObj.setAttributeNS(null, "font-size", "15px"); //"30px");
   svgObj.setAttributeNS(null, "style", "fill:" + col);
   svgObj.setAttributeNS(null, "stroke", 'black');
   svgObj.setAttributeNS(null, "stroke-width", "0.01");
