@@ -264,6 +264,13 @@ SVGView.prototype.touchInput = function() {
 
   this.input = new Input(document); // dom
 
+  this.input.spyEvent = function(e) {
+    console.log(e.type);
+    thiz.projection.title = e.type;
+    thiz.changeProj(0, 0, 0, 0);
+
+  };
+
   this.input.savePos = function(x, y) {
     thiz.prevPos = {
       x: x,
