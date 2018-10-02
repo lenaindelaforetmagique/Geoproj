@@ -314,6 +314,7 @@ SVGView.prototype.touchInput = function() {
     if (thiz.prevPos == null) {
       return;
     } else {
+      thiz.changeProj(0, 0, 1, 0);
       let dx = x - thiz.prevPos.x;
       let dy = y - thiz.prevPos.y;
       thiz.input.savePos(x, y);
@@ -322,6 +323,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.zoom = function(x, y, k) {
+    thiz.changeProj(0, Math.sign(k - 1), 0, 0);
     thiz.viewBox.scale(x, y, k);
   };
 
