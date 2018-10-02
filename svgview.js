@@ -363,6 +363,7 @@ SVGView.prototype.touchInput = function() {
     let size = thiz.input.getTouchSize(e.touches);
     thiz.input.saveTouchSize(size);
     thiz.projection.title += ')';
+    thiz.projection.title += curPos.x + ", " + curPos.y;
     thiz.changeProj(0, 0, 0, 0);
   };
 
