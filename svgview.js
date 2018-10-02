@@ -266,11 +266,10 @@ SVGView.prototype.touchInput = function() {
   this.input = new Input(dom); // dom
 
   this.input.spyEvent = function(e) {
-    console.log(e.type);
     thiz.projection.title = e.type;
     thiz.changeProj(0, 0, 0, 0);
-
   };
+
 
   this.input.savePos = function(x, y) {
     thiz.prevPos = {
@@ -285,10 +284,11 @@ SVGView.prototype.touchInput = function() {
 
   this.input.saveTouchSize = function(size) {
     thiz.prevSize = size;
-  }
+  };
+
   this.input.resetTouchSize = function() {
     thiz.prevSize = null;
-  }
+  };
 
   this.input.getTouchPos = function(l_touches) {
     let x = 0;
@@ -356,11 +356,14 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchstart = function(e) {
+    thiz.projection.title += '(';
     let curPos = thiz.input.getTouchPos(e.touches);
     thiz.input.savePos(curPos.x, curPos.y);
-
+    thiz.projection.title += '-';
     let size = thiz.input.getTouchSize(e.touches);
     thiz.input.saveTouchSize(size);
+    thiz.projection.title += ')';
+    thiz.changeProj(0, 0, 0, 0);
   };
 
   this.input.handle_touchmove = function(e) {

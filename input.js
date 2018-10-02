@@ -59,30 +59,30 @@ Input = function(dom) {
   dom.addEventListener("touchstart", function(e) {
     thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchstart(e); //start(e.touches[0].clientX, e.touches[0].clientY);
+    thiz.handle_touchstart(e);
   });
 
   dom.addEventListener("touchmove", function(e) {
     thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchmove(e); //move(e.touches[0].clientX, e.touches[0].clientY);
+    thiz.handle_touchmove(e);
   });
 
   dom.addEventListener("touchend", function(e) {
     thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchend(e); //end();
+    thiz.handle_touchend(e);
   });
 
   dom.addEventListener("touchcancel", function(e) {
     thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchcancel(e); //end();
+    thiz.handle_touchcancel(e);
   });
 
   dom.addEventListener("touchleave", function(e) {
     thiz.spyEvent(e);
     e.preventDefault();
-    thiz.handle_touchleave(e); //end();
+    thiz.handle_touchleave(e);
   });
 };
