@@ -10,6 +10,7 @@ removeDOMChildren = function(dom) {
 
 
 SVGView = function(sourceShapes) {
+  this.container = document.getElementById("container");
   this.lines = [];
   this.polygons = [];
 
@@ -34,12 +35,12 @@ SVGView.prototype.init = function(sourceShapes) {
   var thiz = this;
 
   thiz.svg = document.createElementNS(svgNS, "svg");
-  document.body.appendChild(thiz.svg);
+  thiz.container.appendChild(thiz.svg);
   thiz.viewBox = new ViewBox(thiz.svg);
 
   // description box
   thiz.description = document.createElementNS(svgNS, "svg");
-  document.body.appendChild(thiz.description);
+  thiz.container.appendChild(thiz.description);
 
   // Create lines
   // meridians
@@ -255,8 +256,8 @@ SVGView.prototype.setupInput = function() {
 
 
 SVGView.prototype.touchInput = function() {
-  var dom = this.svg;
   var thiz = this;
+  var dom = thiz.container;
 
   this.prevPos = null;
   this.prevSize = null;
@@ -321,7 +322,6 @@ SVGView.prototype.touchInput = function() {
     if (thiz.prevPos == null) {
       return;
     } else {
-      thiz.changeProj(0, 0, 1, 0);
       let dx = x - thiz.prevPos.x;
       let dy = y - thiz.prevPos.y;
       thiz.input.savePos(x, y);
@@ -330,7 +330,6 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.zoom = function(x, y, k) {
-    thiz.changeProj(0, Math.sign(k - 1), 0, 0);
     thiz.viewBox.scale(x, y, k);
   };
 
@@ -345,7 +344,6 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_mouseup = function(e) {
-    thiz.changeProj(0, 0, 0, -1);
     thiz.input.resetPos();
   };
 
@@ -358,7 +356,6 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchstart = function(e) {
-    thiz.changeProj(0, 0, 0, e.touches.length);
     let curPos = thiz.input.getTouchPos(e.touches);
     thiz.input.savePos(curPos.x, curPos.y);
 
@@ -367,7 +364,6 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchmove = function(e) {
-    thiz.changeProj(0, 0, 0, 10);
     let curPos = thiz.input.getTouchPos(e.touches);
     let dx = curPos.x - thiz.input.prevPos.x;
     let dy = curPos.y - thiz.input.prevPos.y;
@@ -386,7 +382,6 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchend = function(e) {
-    thiz.changeProj(0, 0, 0, -1);
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
   };
