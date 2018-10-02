@@ -1,5 +1,15 @@
 var nop = function() {};
 
+var changeBGColor = function() {
+  console.log("coucou");
+  let r = Math.floor(Math.random() * 255);
+  let v = Math.floor(Math.random() * 255);
+  let b = Math.floor(Math.random() * 255);
+  document.body.setAttributeNS(null, "style", "background-color:" + `rgb(${r},${v},${b})`);
+}
+
+
+
 Input = function(dom) {
   this.handle_mousedown = nop;
   this.handle_mousemove = nop;
@@ -15,47 +25,56 @@ Input = function(dom) {
   var thiz = this;
 
   dom.addEventListener("mousedown", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_mousedown(e); //start(e.clientX, e.clientY);
   });
 
   dom.addEventListener("mousemove", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_mousemove(e); //move(e.clientX, e.clientY);
   });
 
   dom.addEventListener("mouseup", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_mouseup(e); //end(e.clientX, e.clientY);
   });
 
   dom.addEventListener("wheel", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_wheel(e); //scroll(e.clientX, e.clientY, e.deltaY);
   });
 
 
   dom.addEventListener("touchstart", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_touchstart(e); //start(e.touches[0].clientX, e.touches[0].clientY);
   });
 
   dom.addEventListener("touchmove", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_touchmove(e); //move(e.touches[0].clientX, e.touches[0].clientY);
   });
 
   dom.addEventListener("touchend", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_touchend(e); //end();
   });
 
   dom.addEventListener("touchcancel", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_touchcancel(e); //end();
   });
 
   dom.addEventListener("touchleave", function(e) {
+    changeBGColor();
     e.preventDefault();
     thiz.handle_touchleave(e); //end();
   });
