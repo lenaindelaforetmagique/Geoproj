@@ -27,47 +27,47 @@ Input = function(dom) {
   dom.addEventListener("mousedown", function(e) {
     e.preventDefault();
     thiz.handle_mousedown(e);
-  });
+  }, false);
 
   dom.addEventListener("mousemove", function(e) {
     e.preventDefault();
     thiz.handle_mousemove(e);
-  });
+  }, false);
 
   dom.addEventListener("mouseup", function(e) {
     e.preventDefault();
     thiz.handle_mouseup(e);
-  });
+  }, false);
 
   dom.addEventListener("wheel", function(e) {
     e.preventDefault();
     thiz.handle_wheel(e);
-  });
+  }, false);
 
   dom.addEventListener("touchstart", function(e) {
     e.preventDefault();
     thiz.handle_touchstart(e);
-  });
+  }, false);
 
   dom.addEventListener("touchmove", function(e) {
     e.preventDefault();
     thiz.handle_touchmove(e);
-  });
+  }, false);
 
   dom.addEventListener("touchend", function(e) {
     e.preventDefault();
     thiz.handle_touchend(e);
-  });
+  }, false);
 
   dom.addEventListener("touchcancel", function(e) {
     e.preventDefault();
     thiz.handle_touchend(e);
-  });
+  }, false);
 
   dom.addEventListener("touchleave", function(e) {
     e.preventDefault();
     thiz.handle_touchend(e);
-  });
+  }, false);
 };
 
 Input.prototype.loadMouse = function(e) {
