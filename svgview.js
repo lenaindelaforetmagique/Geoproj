@@ -11,7 +11,8 @@ removeDOMChildren = function(dom) {
 
 SVGView = function(sourceShapes) {
   this.container = document.getElementById("container");
-  this.console = document.getElementById("console");
+  this.bottom = document.getElementById("console");
+  this.console = null;
 
   this.lines = [];
   this.polygons = [];
@@ -39,6 +40,11 @@ SVGView.prototype.init = function(sourceShapes) {
   thiz.svg = document.createElementNS(svgNS, "svg");
   thiz.container.appendChild(thiz.svg);
   thiz.viewBox = new ViewBox(thiz.svg);
+
+  thiz.console = document.createElement("textarea");
+  thiz.bottom.appendChild(thiz.console);
+
+  console.log(thiz.console);
 
   // // description box
   // thiz.description = document.createElementNS(svgNS, "svg");
@@ -265,15 +271,13 @@ SVGView.prototype.touchInput = function() {
   // this.inputThreshold = 40;
 
 
-  spyEvent = function(msg = "") {
-    let domObj = document.createElement("p");
-    domObj.textContent = "[ " + msg + " ]";
-    removeDOMChildren(thiz.console);
-    thiz.console.appendChild(domObj);
+  print = function(msg = "") {
+    thiz.console.textContent += `\n` + "[ " + msg + " ]";
+    thiz.console.scrollTop = thiz.console.scrollHeight;
+  };
 
-
-    // thiz.projection.title = "[ " + msg + " ]";
-    // thiz.changeProj(0, 0, 0, 0);
+  clrConsole = function() {
+    thiz.console.textContent = "";
   };
 
   move = function() {
@@ -292,14 +296,14 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_mousedown = function(e) {
     thiz.input.loadMouse(e);
-    spyEvent(thiz.input.msg);
+    print(thiz.input.msg);
     thiz.input.savePos();
   };
 
   this.input.handle_mousemove = function(e) {
     thiz.input.loadMouse(e);
-    spyEvent(thiz.input.msg);
     if (thiz.input.prevPos !== null) {
+      print(thiz.input.msg);
       move();
       thiz.input.savePos();
     }
@@ -307,13 +311,13 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_mouseup = function(e) {
     thiz.input.loadMouse(e);
-    spyEvent(thiz.input.msg);
+    print(thiz.input.msg);
     thiz.input.resetPos();
   };
 
   this.input.handle_wheel = function(e) {
     thiz.input.loadMouse(e);
-    spyEvent(thiz.input.msg);
+    print(thiz.input.msg);
     let k = 1.1;
     if (e.deltaY > 0) {
       k = 1 / k;
@@ -323,17 +327,17 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
-    spyEvent(thiz.input.msg);
+    print(thiz.input.msg);
     // thiz.input.savePos();
   };
 
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
-    spyEvent(thiz.input.msg);
+    print(thiz.input.msg);
     if (thiz.input.prevPos !== null) {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
-      console.log(dx, dy);
+      print(dx + " - " + dy + " ; " + thiz.input.curSize);
       if (this.input.curSize > 0) {
         // more than 1 finger
         move();
@@ -352,7 +356,7 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchend = function(e) {
     thiz.input.loadTouch(e);
-    spyEvent(thiz.input.msg);
+    print(thiz.input.msg);
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
   };

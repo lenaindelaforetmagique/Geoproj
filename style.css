@@ -11,6 +11,7 @@ p {
   padding: 0;
   line-height: 1;
   font-family: "Courier New";
+  font-size: 10px;
 }
 
 svg {
@@ -34,14 +35,20 @@ text {
   margin: 0;
   padding: 0;
   background: #EEEEEE;
-  height: 95%;
+  height: 90%;
   overflow: hidden;
+}
+
+textarea {
+  height: 100%;
+  width: 100%;
 }
 
 #console {
   margin: 0;
   padding: 0;
   background: #CCCCCC;
-  height: 5%;
-  overflow: hidden;
+  height: 10%;
+  overflow: scroll;
+  /* hidden; */
 }
