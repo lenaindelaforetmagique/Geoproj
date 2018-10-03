@@ -268,22 +268,19 @@ SVGView.prototype.touchInput = function() {
     thiz.changeProj(0, 0, 0, 0);
   };
 
-  move = function(x, y) {
+  move = function() {
     if (thiz.input.prevPos == null) {
       return;
     } else {
-      let dx = x - thiz.input.prevPos.x;
-      let dy = y - thiz.input.prevPos.y;
-      thiz.input.savePos(x, y);
+      let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
+      let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
       thiz.viewBox.translate(-dx, -dy);
     }
   };
 
-  this.input.zoom = function(x, y, k) {
-    thiz.viewBox.scale(x, y, k);
+  zoom = function(k) {
+    thiz.viewBox.scale(thiz.input.curPos.x, thiz.input.curPos.y, k);
   };
-
-
 
   this.input.handle_mousedown = function(e) {
     thiz.input.loadMouse(e);
@@ -294,7 +291,10 @@ SVGView.prototype.touchInput = function() {
   this.input.handle_mousemove = function(e) {
     thiz.input.loadMouse(e);
     spyEvent(thiz.input.msg);
-    move(thiz.input.curPos.x, thiz.input.curPos.y);
+    if (thiz.input.prevPos !== null) {
+      move();
+      thiz.input.savePos();
+    }
   };
 
   this.input.handle_mouseup = function(e) {
@@ -310,13 +310,13 @@ SVGView.prototype.touchInput = function() {
     if (e.deltaY > 0) {
       k = 1 / k;
     }
-    thiz.input.zoom(thiz.input.curPos.x, thiz.input.curPos.y, k);
+    zoom(k);
   };
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
     spyEvent(thiz.input.msg);
-    thiz.input.savePos();
+    // thiz.input.savePos();
   };
 
   this.input.handle_touchmove = function(e) {
@@ -420,7 +420,6 @@ ViewBox = function(parentSvg) {
 SVGView.prototype.projectionFunction = function() {
   var thiz = this;
   // return EquiRectangularProjection(coordinates);
-  // console.log("connard");
   // console.log(thiz.iProjection);
   // console.log(ListOfProjections);
   return ListOfProjections[thiz.iProjection % ListOfProjections.length].func;
