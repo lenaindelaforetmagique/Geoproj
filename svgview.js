@@ -328,12 +328,13 @@ SVGView.prototype.touchInput = function() {
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
     print(thiz.input.msg);
-    // thiz.input.savePos();
+    thiz.input.savePos();
   };
 
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
     print(thiz.input.msg);
+    print(thiz.input.prevPos);
     if (thiz.input.prevPos !== null) {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
