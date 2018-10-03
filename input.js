@@ -44,11 +44,10 @@ Input = function(dom) {
     thiz.handle_wheel(e);
   });
 
-
-  dom.addEventListener("touchstart", function(e) {
-    e.preventDefault();
-    thiz.handle_touchstart(e);
-  });
+  // dom.addEventListener("touchstart", function(e) {
+  //   e.preventDefault();
+  //   thiz.handle_touchstart(e);
+  // });
 
   dom.addEventListener("touchmove", function(e) {
     e.preventDefault();
