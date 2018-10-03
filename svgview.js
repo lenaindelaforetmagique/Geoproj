@@ -330,6 +330,7 @@ SVGView.prototype.touchInput = function() {
     thiz.input.loadTouch(e);
     print(thiz.input.msg);
     thiz.input.savePos();
+    thiz.input.saveTouchSize();
   };
 
   this.input.handle_touchmove = function(e) {
