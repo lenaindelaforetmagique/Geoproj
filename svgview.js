@@ -18,7 +18,7 @@ SVGView = function(sourceShapes) {
 
   this.svg = null;
   this.viewBox = null;
-  this.description = null;
+  // this.description = null;
 
   this.iProjection = 0;
   this.projection = ListOfProjections[0];
@@ -40,9 +40,9 @@ SVGView.prototype.init = function(sourceShapes) {
   thiz.container.appendChild(thiz.svg);
   thiz.viewBox = new ViewBox(thiz.svg);
 
-  // description box
-  thiz.description = document.createElementNS(svgNS, "svg");
-  thiz.container.appendChild(thiz.description);
+  // // description box
+  // thiz.description = document.createElementNS(svgNS, "svg");
+  // thiz.container.appendChild(thiz.description);
 
   // Create lines
   // meridians
@@ -120,38 +120,38 @@ SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta 
   // thiz.projection.ct = Math.cos(thiz.projection.theta * Math.PI / 180);
   // thiz.projection.st = Math.sin(thiz.projection.theta * Math.PI / 180);
 
-  // change description
-  removeDOMChildren(thiz.description);
+  // // change description
+  // removeDOMChildren(thiz.description);
 
-  // draw title
-  let svgObj = document.createElementNS(svgNS, 'text');
-  let col = 'rgba(0,0,0,0.7)';
-
-  svgObj.setAttributeNS(null, "x", 0);
-  svgObj.setAttributeNS(null, "y", 30);
-  svgObj.setAttributeNS(null, "font-size", "15px"); //"30px");
-  svgObj.setAttributeNS(null, "style", "fill:" + col);
-  svgObj.setAttributeNS(null, "stroke", 'black');
-  svgObj.setAttributeNS(null, "stroke-width", "0.01");
-  svgObj.setAttributeNS(null, "height", "90px");
-  svgObj.setAttributeNS(null, "viewwidth", window.innerWidth);
-  svgObj.textContent = thiz.projection.title;
-
-  let tbox = document.createElementNS(svgNS, 'tspan');
-  tbox.textContent = thiz.projection.description();
-  tbox.setAttributeNS(null, "x", 0);
-  tbox.setAttributeNS(null, "dy", 20);
-  tbox.setAttributeNS(null, "font-size", "15px");
-  svgObj.appendChild(tbox);
-
-  for (let i = 0; i < thiz.projection.properties.length; i++) {
-    let tbox = document.createElementNS(svgNS, 'tspan');
-    tbox.textContent = thiz.projection.properties[i];
-    tbox.setAttributeNS(null, "x", 0);
-    tbox.setAttributeNS(null, "dy", 15);
-    tbox.setAttributeNS(null, "font-size", "15px");
-    svgObj.appendChild(tbox);
-  }
+  // // draw title
+  // let svgObj = document.createElementNS(svgNS, 'text');
+  // let col = 'rgba(0,0,0,0.7)';
+  //
+  // svgObj.setAttributeNS(null, "x", 0);
+  // svgObj.setAttributeNS(null, "y", 30);
+  // svgObj.setAttributeNS(null, "font-size", "15px"); //"30px");
+  // svgObj.setAttributeNS(null, "style", "fill:" + col);
+  // svgObj.setAttributeNS(null, "stroke", 'black');
+  // svgObj.setAttributeNS(null, "stroke-width", "0.01");
+  // svgObj.setAttributeNS(null, "height", "90px");
+  // svgObj.setAttributeNS(null, "viewwidth", window.innerWidth);
+  // svgObj.textContent = thiz.projection.title;
+  //
+  // let tbox = document.createElementNS(svgNS, 'tspan');
+  // tbox.textContent = thiz.projection.description();
+  // tbox.setAttributeNS(null, "x", 0);
+  // tbox.setAttributeNS(null, "dy", 20);
+  // tbox.setAttributeNS(null, "font-size", "15px");
+  // svgObj.appendChild(tbox);
+  //
+  // for (let i = 0; i < thiz.projection.properties.length; i++) {
+  //   let tbox = document.createElementNS(svgNS, 'tspan');
+  //   tbox.textContent = thiz.projection.properties[i];
+  //   tbox.setAttributeNS(null, "x", 0);
+  //   tbox.setAttributeNS(null, "dy", 15);
+  //   tbox.setAttributeNS(null, "font-size", "15px");
+  //   svgObj.appendChild(tbox);
+  // }
 
   // let legend = document.createElementNS(svgNS, 'tspan');
   // legend.setAttributeNS(null, "x", 5);
@@ -160,7 +160,7 @@ SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta 
   // legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows + a/q + z/s + e/d";
   // svgObj.appendChild(legend);
 
-  thiz.description.appendChild(svgObj);
+  // thiz.description.appendChild(svgObj);
 
   // lines
   for (let i = 0; i < thiz.lines.length; i++) {
@@ -330,29 +330,30 @@ SVGView.prototype.touchInput = function() {
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
     spyEvent("m" + thiz.input.msg);
+    if (thiz.input.prevPos !== null) {
+      let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
+      let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
 
-    // let curPos = thiz.input.getTouchPos(e.touches);
-    // let dx = curPos.x - thiz.input.prevPos.x;
-    // let dy = curPos.y - thiz.input.prevPos.y;
-    // let size = thiz.input.getTouchSize(e.touches);
-    //
-    // if (size > 0 && thiz.input.prevSize > 0) {
-    //   let k = size / thiz.input.prevSize;
-    //
-    //   thiz.input.move(curPos.x, curPos.y);
-    //   thiz.input.zoom(curPos.x, curPos.y, k);
-    //   thiz.input.saveTouchSize(size);
-    //
-    // } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
-    //   thiz.changeProj(Math.sign(dx));
-    // }
+      if (this.input.curSize > 0) {
+        // more than 1 finger
+        move();
+        thiz.input.savePos();
+        if (thiz.input.prevSize > 0) {
+          zoom(thiz.input.prevSize / this.input.curSize);
+          thiz.input.saveTouchSize();
+        }
+      } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
+        // 1 finger + x-slide>20px
+        thiz.changeProj(Math.sign(dx));
+      }
+    }
   };
 
   this.input.handle_touchend = function(e) {
     thiz.input.loadTouch(e);
     spyEvent("e" + thiz.input.msg);
-    // thiz.input.resetPos();
-    // thiz.input.resetTouchSize();
+    thiz.input.resetPos();
+    thiz.input.resetTouchSize();
   };
 };
 

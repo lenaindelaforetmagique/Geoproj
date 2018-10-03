@@ -34,7 +34,7 @@ text {
   margin: 0;
   padding: 0;
   background: #EEEEEE;
-  height: 80%;
+  height: 95%;
   overflow: hidden;
 }
 
@@ -42,6 +42,6 @@ text {
   margin: 0;
   padding: 0;
   background: #CCCCCC;
-  height: 20%;
+  height: 5%;
   overflow: hidden;
 }
