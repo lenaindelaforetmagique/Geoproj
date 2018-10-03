@@ -44,8 +44,6 @@ SVGView.prototype.init = function(sourceShapes) {
   thiz.console = document.createElement("textarea");
   thiz.bottom.appendChild(thiz.console);
 
-  console.log(thiz.console);
-
   // // description box
   // thiz.description = document.createElementNS(svgNS, "svg");
   // thiz.container.appendChild(thiz.description);
@@ -296,15 +294,15 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_mousedown = function(e) {
     thiz.input.loadMouse(e);
-    print(thiz.input.msg);
+    // print(thiz.input.msg);
     thiz.input.savePos();
   };
 
   this.input.handle_mousemove = function(e) {
     thiz.input.loadMouse(e);
-    print(thiz.input.prevPos);
+    // print(thiz.input.prevPos);
     if (thiz.input.prevPos !== null) {
-      print(thiz.input.msg);
+      // print(thiz.input.msg);
       move();
       thiz.input.savePos();
     }
@@ -312,13 +310,13 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_mouseup = function(e) {
     thiz.input.loadMouse(e);
-    print(thiz.input.msg);
+    // print(thiz.input.msg);
     thiz.input.resetPos();
   };
 
   this.input.handle_wheel = function(e) {
     thiz.input.loadMouse(e);
-    print(thiz.input.msg);
+    // print(thiz.input.msg);
     let k = 1.1;
     if (e.deltaY > 0) {
       k = 1 / k;
@@ -328,29 +326,32 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
-    print(thiz.input.msg);
+    // print(thiz.input.msg);
     thiz.input.savePos();
     thiz.input.saveTouchSize();
   };
 
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
-    print(thiz.input.msg);
+    // print(thiz.input.msg);
     if (thiz.input.prevPos !== null) {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
 
       if (thiz.input.curSize > 0) {
         // more than 1 finger
+        print("translate");
         move();
         thiz.input.savePos();
         print(thiz.input.prevSize + " / " + thiz.input.curSize);
         if (thiz.input.prevSize > 0) {
+          print("zoom");
+          print(thiz.input.prevSize / this.input.curSize);
           zoom(thiz.input.prevSize / this.input.curSize);
           thiz.input.saveTouchSize();
         }
       } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
-        print("transl");
+        print("change proj");
         // 1 finger + x-slide>20px
         thiz.changeProj(Math.sign(dx));
         thiz.input.resetPos();
@@ -361,7 +362,7 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchend = function(e) {
     thiz.input.loadTouch(e);
-    print(thiz.input.msg);
+    // print(thiz.input.msg);
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
   };
