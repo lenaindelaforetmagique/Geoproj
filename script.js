@@ -1,10 +1,6 @@
 // reading of .JSON file
-var requestURL = 'earth-coastlines-12.json';
-var request = new XMLHttpRequest();
 
-request.open('GET', requestURL);
-request.responseType = 'json';
-request.send();
+var request = new XMLHttpRequest();
 request.onload = function() {
   var coastlines = request.response;
   // see http://geojson.org/
@@ -17,3 +13,8 @@ request.onload = function() {
   var run = new SVGView(coastlines.geometries[0].coordinates);
   // run.init();
 }
+
+var requestURL = 'earth-coastlines-12.json';
+request.open('GET', requestURL);
+request.responseType = 'json';
+request.send();

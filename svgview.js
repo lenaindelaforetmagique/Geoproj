@@ -206,7 +206,7 @@ SVGView.prototype.setupInput = function() {
   var thiz = this;
 
   document.onkeydown = function(e) {
-    console.log(e.which);
+    // console.log(e.which);
     switch (e.which) {
       case 65: //a
         thiz.changeProj(0, 1);
@@ -259,8 +259,8 @@ SVGView.prototype.touchInput = function() {
   var thiz = this;
   var dom = thiz.container;
 
-  this.prevPos = null;
-  this.prevSize = null;
+  this.input.prevPos = null;
+  this.input.prevSize = null;
   // this.inputThreshold = 40;
 
   this.input = new Input(dom); // dom
@@ -272,22 +272,22 @@ SVGView.prototype.touchInput = function() {
 
 
   this.input.savePos = function(x, y) {
-    thiz.prevPos = {
+    thiz.input.prevPos = {
       x: x,
       y: y
     };
   };
 
   this.input.resetPos = function() {
-    thiz.prevPos = null;
+    thiz.input.prevPos = null;
   };
 
   this.input.saveTouchSize = function(size) {
-    thiz.prevSize = size;
+    thiz.input.prevSize = size;
   };
 
   this.input.resetTouchSize = function() {
-    thiz.prevSize = null;
+    thiz.input.prevSize = null;
   };
 
   this.input.getTouchPos = function(l_touches) {
@@ -317,18 +317,16 @@ SVGView.prototype.touchInput = function() {
       }
     }
     lMax = Math.pow(lMax, 0.5);
-    thiz.projection.title += `${lMax}`;
-    thiz.changeProj(0, 0, 0, 0);
     return lMax;
   };
 
 
   this.input.move = function(x, y) {
-    if (thiz.prevPos == null) {
+    if (thiz.input.prevPos == null) {
       return;
     } else {
-      let dx = x - thiz.prevPos.x;
-      let dy = y - thiz.prevPos.y;
+      let dx = x - thiz.input.prevPos.x;
+      let dy = y - thiz.input.prevPos.y;
       thiz.input.savePos(x, y);
       thiz.viewBox.translate(-dx, -dy);
     }
