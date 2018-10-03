@@ -260,81 +260,15 @@ SVGView.prototype.touchInput = function() {
   var dom = thiz.container;
 
   this.input = new Input(dom); // dom
-
-  this.input.prevPos = null;
-  this.input.prevSize = null;
   // this.inputThreshold = 40;
 
-  this.input.touchMsg = function(e) {
-    let curPos = thiz.input.getTouchPos(e.touches);
-    let size = thiz.input.getTouchSize(e.touches);
-    str = `{x: ${curPos.x}, y: ${curPos.y}}`;
-    str += ` {l: ${size}}`;
-    return str;
-  }
 
-
-  this.input.spyEvent = function(e, msg = "") {
-    let str = `${e.type}`;
-    if (msg !== "") {
-      str += " - " + msg;
-    }
-    thiz.projection.title = str;
+  spyEvent = function(msg = "") {
+    thiz.projection.title = "[ " + msg + " ]";
     thiz.changeProj(0, 0, 0, 0);
   };
 
-
-  this.input.savePos = function(x, y) {
-    thiz.input.prevPos = {
-      x: x,
-      y: y
-    };
-  };
-
-  this.input.resetPos = function() {
-    thiz.input.prevPos = null;
-  };
-
-  this.input.saveTouchSize = function(size) {
-    thiz.input.prevSize = size;
-  };
-
-  this.input.resetTouchSize = function() {
-    thiz.input.prevSize = null;
-  };
-
-  this.input.getTouchPos = function(l_touches) {
-    let x = 0;
-    let y = 0;
-    let n = l_touches.length;
-    for (let i = 0; i < n; i++) {
-      x += l_touches[i].clientX / n;
-      y += l_touches[i].clientY / n;
-    }
-    // thiz.projection.title += `(${n},${x},${y})`;
-    // thiz.changeProj(0, 0, 0, 0);
-    return {
-      x: x,
-      y: y
-    };
-  };
-
-  this.input.getTouchSize = function(l_touches) {
-    let lMax = 0;
-    let n = l_touches.length;
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n; j++) {
-        let l = Math.pow(l_touches[i].clientX - l_touches[j].clientX, 2);
-        l += Math.pow(l_touches[i].clientY - l_touches[j].clientY, 2);
-        lMax = Math.max(lMax, l);
-      }
-    }
-    lMax = Math.pow(lMax, 0.5);
-    return lMax;
-  };
-
-
-  this.input.move = function(x, y) {
+  move = function(x, y) {
     if (thiz.input.prevPos == null) {
       return;
     } else {
@@ -352,35 +286,42 @@ SVGView.prototype.touchInput = function() {
 
 
   this.input.handle_mousedown = function(e) {
-    thiz.input.savePos(e.clientX, e.clientY);
+    thiz.input.loadMouse(e);
+    spyEvent(thiz.input.msg);
+    thiz.input.savePos();
   };
 
   this.input.handle_mousemove = function(e) {
-    thiz.input.move(e.clientX, e.clientY);
+    thiz.input.loadMouse(e);
+    spyEvent(thiz.input.msg);
+    move(thiz.input.curPos.x, thiz.input.curPos.y);
   };
 
   this.input.handle_mouseup = function(e) {
+    thiz.input.loadMouse(e);
+    spyEvent(thiz.input.msg);
     thiz.input.resetPos();
   };
 
   this.input.handle_wheel = function(e) {
+    thiz.input.loadMouse(e);
+    spyEvent(thiz.input.msg);
     let k = 1.1;
     if (e.deltaY > 0) {
       k = 1 / k;
     }
-    thiz.input.zoom(e.clientX, e.clientY, k);
+    thiz.input.zoom(thiz.input.curPos.x, thiz.input.curPos.y, k);
   };
 
   this.input.handle_touchstart = function(e) {
-    thiz.input.spyEvent(e, thiz.input.touchMsg(e));
-    let curPos = thiz.input.getTouchPos(e.touches);
-    thiz.input.savePos(curPos.x, curPos.y);
-    let size = thiz.input.getTouchSize(e.touches);
-    thiz.input.saveTouchSize(size);
+    thiz.input.loadTouch(e);
+    spyEvent(thiz.input.msg);
+    thiz.input.savePos();
   };
 
   this.input.handle_touchmove = function(e) {
-    thiz.input.spyEvent(e, thiz.input.touchMsg(e));
+    thiz.input.loadTouch(e);
+    spyEvent(thiz.input.msg);
 
     // let curPos = thiz.input.getTouchPos(e.touches);
     // let dx = curPos.x - thiz.input.prevPos.x;
@@ -400,9 +341,10 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchend = function(e) {
-    thiz.input.spyEvent(e, thiz.input.touchMsg(e));
-    thiz.input.resetPos();
-    thiz.input.resetTouchSize();
+    thiz.input.loadTouch(e);
+    spyEvent(thiz.input.msg);
+    // thiz.input.resetPos();
+    // thiz.input.resetTouchSize();
   };
 };
 
