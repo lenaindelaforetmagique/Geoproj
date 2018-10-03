@@ -346,8 +346,8 @@ SVGView.prototype.touchInput = function() {
         print(thiz.input.prevSize + " / " + thiz.input.curSize);
         if (thiz.input.prevSize > 0) {
           print("zoom");
-          print(thiz.input.prevSize / this.input.curSize);
-          zoom(thiz.input.prevSize / this.input.curSize);
+          print(thiz.input.prevSize / thiz.input.curSize);
+          zoom(thiz.input.prevSize / thiz.input.curSize);
           thiz.input.saveTouchSize();
         }
       } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
