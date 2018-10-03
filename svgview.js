@@ -302,6 +302,7 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_mousemove = function(e) {
     thiz.input.loadMouse(e);
+    print(thiz.input.prevPos);
     if (thiz.input.prevPos !== null) {
       print(thiz.input.msg);
       move();
@@ -339,7 +340,8 @@ SVGView.prototype.touchInput = function() {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
       print(dx + " - " + dy + " ; " + thiz.input.curSize);
-      if (this.input.curSize > 0) {
+
+      if (thiz.input.curSize > 0) {
         // more than 1 finger
         move();
         thiz.input.savePos();
@@ -347,10 +349,11 @@ SVGView.prototype.touchInput = function() {
           zoom(thiz.input.prevSize / this.input.curSize);
           thiz.input.saveTouchSize();
         }
-      } else if (Math.abs(dx / dy) > 1) {
-        console.log("transl");
+      } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
+        print("transl");
         // 1 finger + x-slide>20px
         thiz.changeProj(Math.sign(dx));
+        thiz.input.savePos();
       }
     }
   };
