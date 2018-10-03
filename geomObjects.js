@@ -1,3 +1,8 @@
+//Geometrical objects here:
+// point
+// line
+// polygon
+
 Point = function(lam, phi) {
   // lambda and phi in degrees
   // conversion here

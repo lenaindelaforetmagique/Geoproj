@@ -11,6 +11,8 @@ removeDOMChildren = function(dom) {
 
 SVGView = function(sourceShapes) {
   this.container = document.getElementById("container");
+  this.console = document.getElementById("console");
+
   this.lines = [];
   this.polygons = [];
 
@@ -131,7 +133,7 @@ SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta 
   svgObj.setAttributeNS(null, "style", "fill:" + col);
   svgObj.setAttributeNS(null, "stroke", 'black');
   svgObj.setAttributeNS(null, "stroke-width", "0.01");
-  svgObj.setAttributeNS(null, "height", window.innerHeight);
+  svgObj.setAttributeNS(null, "height", "90px");
   svgObj.setAttributeNS(null, "viewwidth", window.innerWidth);
   svgObj.textContent = thiz.projection.title;
 
@@ -264,8 +266,14 @@ SVGView.prototype.touchInput = function() {
 
 
   spyEvent = function(msg = "") {
-    thiz.projection.title = "[ " + msg + " ]";
-    thiz.changeProj(0, 0, 0, 0);
+    let domObj = document.createElement("p");
+    domObj.textContent = "[ " + msg + " ]";
+    removeDOMChildren(thiz.console);
+    thiz.console.appendChild(domObj);
+
+
+    // thiz.projection.title = "[ " + msg + " ]";
+    // thiz.changeProj(0, 0, 0, 0);
   };
 
   move = function() {

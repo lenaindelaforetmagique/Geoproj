@@ -6,17 +6,24 @@ html, body {
   /* overflow: hidden; */
 }
 
+p {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  font-family: "Courier New";
+}
+
 svg {
   margin: 0;
   padding: 0;
   /* }
 
 #legend { */
-  position: absolute;
+  /* position: absolute;
   left: 0px;
-  top: 0px;
-  height: 100%;
-  width: 100%;
+  top: 0px; */
+  /* height: 100%;
+  width: 100%; */
 }
 
 text {
@@ -27,6 +34,14 @@ text {
   margin: 0;
   padding: 0;
   background: #EEEEEE;
-  height: 100%;
+  height: 80%;
+  overflow: hidden;
+}
+
+#console {
+  margin: 0;
+  padding: 0;
+  background: #CCCCCC;
+  height: 20%;
   overflow: hidden;
 }
