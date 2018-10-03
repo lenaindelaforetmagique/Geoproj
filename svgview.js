@@ -265,9 +265,21 @@ SVGView.prototype.touchInput = function() {
   this.input.prevSize = null;
   // this.inputThreshold = 40;
 
+  this.input.touchMsg = function(e) {
+    let curPos = thiz.input.getTouchPos(e.touches);
+    let size = thiz.input.getTouchSize(e.touches);
+    str = `{x: ${curPos.x}, y: ${curPos.y}}`;
+    str += ` {l: ${size}}`;
+    return str;
+  }
 
-  this.input.spyEvent = function(e) {
-    thiz.projection.title = e.type;
+
+  this.input.spyEvent = function(e, msg = "") {
+    let str = `${e.type}`;
+    if (msg !== "") {
+      str += " - " + msg;
+    }
+    thiz.projection.title = str;
     thiz.changeProj(0, 0, 0, 0);
   };
 
@@ -360,7 +372,7 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchstart = function(e) {
-    thiz.input.spyEvent(e);
+    thiz.input.spyEvent(e, thiz.input.touchMsg(e));
     let curPos = thiz.input.getTouchPos(e.touches);
     thiz.input.savePos(curPos.x, curPos.y);
     let size = thiz.input.getTouchSize(e.touches);
@@ -368,26 +380,27 @@ SVGView.prototype.touchInput = function() {
   };
 
   this.input.handle_touchmove = function(e) {
-    thiz.input.spyEvent(e);
-    let curPos = thiz.input.getTouchPos(e.touches);
-    let dx = curPos.x - thiz.input.prevPos.x;
-    let dy = curPos.y - thiz.input.prevPos.y;
-    let size = thiz.input.getTouchSize(e.touches);
+    thiz.input.spyEvent(e, thiz.input.touchMsg(e));
 
-    if (size > 0 && thiz.input.prevSize > 0) {
-      let k = size / thiz.input.prevSize;
-
-      thiz.input.move(curPos.x, curPos.y);
-      thiz.input.zoom(curPos.x, curPos.y, k);
-      thiz.input.saveTouchSize(size);
-
-    } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
-      thiz.changeProj(Math.sign(dx));
-    };
+    // let curPos = thiz.input.getTouchPos(e.touches);
+    // let dx = curPos.x - thiz.input.prevPos.x;
+    // let dy = curPos.y - thiz.input.prevPos.y;
+    // let size = thiz.input.getTouchSize(e.touches);
+    //
+    // if (size > 0 && thiz.input.prevSize > 0) {
+    //   let k = size / thiz.input.prevSize;
+    //
+    //   thiz.input.move(curPos.x, curPos.y);
+    //   thiz.input.zoom(curPos.x, curPos.y, k);
+    //   thiz.input.saveTouchSize(size);
+    //
+    // } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
+    //   thiz.changeProj(Math.sign(dx));
+    // }
   };
 
   this.input.handle_touchend = function(e) {
-    thiz.input.spyEvent(e);
+    thiz.input.spyEvent(e, thiz.input.touchMsg(e));
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
   };
