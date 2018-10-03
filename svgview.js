@@ -151,12 +151,12 @@ SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta 
     svgObj.appendChild(tbox);
   }
 
-  let legend = document.createElementNS(svgNS, 'tspan');
-  legend.setAttributeNS(null, "x", 5);
-  legend.setAttributeNS(null, "y", window.innerHeight - 5);
-  legend.setAttributeNS(null, "font-size", "15px");
-  legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows + a/q + z/s + e/d";
-  svgObj.appendChild(legend);
+  // let legend = document.createElementNS(svgNS, 'tspan');
+  // legend.setAttributeNS(null, "x", 5);
+  // legend.setAttributeNS(null, "y", window.innerHeight - 5);
+  // legend.setAttributeNS(null, "font-size", "15px");
+  // legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows + a/q + z/s + e/d";
+  // svgObj.appendChild(legend);
 
   thiz.description.appendChild(svgObj);
 
@@ -315,13 +315,13 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
-    spyEvent(thiz.input.msg);
+    spyEvent("s" + thiz.input.msg);
     // thiz.input.savePos();
   };
 
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
-    spyEvent(thiz.input.msg);
+    spyEvent("m" + thiz.input.msg);
 
     // let curPos = thiz.input.getTouchPos(e.touches);
     // let dx = curPos.x - thiz.input.prevPos.x;
@@ -342,7 +342,7 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchend = function(e) {
     thiz.input.loadTouch(e);
-    spyEvent(thiz.input.msg);
+    spyEvent("e" + thiz.input.msg);
     // thiz.input.resetPos();
     // thiz.input.resetTouchSize();
   };
