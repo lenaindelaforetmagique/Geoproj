@@ -1,5 +1,4 @@
 // global variables
-var svgNS = "http://www.w3.org/2000/svg";
 
 removeDOMChildren = function(dom) {
   //removes all children of dom
@@ -9,21 +8,20 @@ removeDOMChildren = function(dom) {
 };
 
 
-SVGView = function(sourceShapes) {
+HTMLView = function(sourceShapes) {
   this.container = document.getElementById("container");
+
   this.bottom = document.getElementById("console");
   this.console = null;
 
-  this.lines = [];
-  this.polygons = [];
-
-  this.svg = null;
-  this.viewBox = null;
+  this.svgMap = null;
   // this.description = null;
 
   this.iProjection = 0;
   this.projection = ListOfProjections[0];
   this.projTitle = "";
+
+
 
   this.lastUpdate = Date.now();
 
@@ -34,82 +32,17 @@ SVGView = function(sourceShapes) {
 }
 
 
-SVGView.prototype.init = function(sourceShapes) {
+HTMLView.prototype.init = function(sourceShapes) {
   var thiz = this;
-
-  thiz.svg = document.createElementNS(svgNS, "svg");
-  thiz.container.appendChild(thiz.svg);
-  thiz.viewBox = new ViewBox(thiz.svg);
+  thiz.svgMap = new SVGMap(sourceShapes);
+  thiz.container.appendChild(thiz.svgMap.domObj);
 
   thiz.console = document.createElement("textarea");
   thiz.bottom.appendChild(thiz.console);
-
-  // // description box
-  // thiz.description = document.createElementNS(svgNS, "svg");
-  // thiz.container.appendChild(thiz.description);
-
-  // Create lines
-  // meridians
-  for (let lat = -90; lat <= 90; lat += 10) {
-    let line = new Line(lat == 0 ? 1 : 0);
-    for (let lon = -180; lon <= 180; lon += 1) {
-      line.points.push(new Point(lon, lat));
-    }
-    thiz.lines.push(line);
-  }
-
-  // parallels
-  for (let lon = -180; lon <= 180; lon += 10) {
-    let line = new Line(lon == 0 ? 1 : 0);
-    for (let lat = -90; lat <= 90; lat += 1) {
-      line.points.push(new Point(lon, lat));
-    }
-    thiz.lines.push(line);
-  }
-
-  // Polygons
-  thiz.polygons = [];
-
-  // Water
-  let water = new Polygon(1);
-  for (let lon = -180; lon <= 180; lon += 1) {
-    water.points.push(new Point(lon, -90));
-  }
-  for (let lat = -90; lat <= 90; lat += 1) {
-    water.points.push(new Point(180, lat));
-  }
-  for (let lon = 180; lon >= -180; lon -= 1) {
-    water.points.push(new Point(lon, 90));
-  }
-  for (let lat = 90; lat >= -90; lat -= 1) {
-    water.points.push(new Point(-180, lat));
-  }
-  thiz.polygons.push(water);
-
-  // Loading shapes
-  for (let i = 0; i < sourceShapes.length; i++) {
-    // Shape level
-    for (let j = 0; j < sourceShapes[i].length; j++) {
-      // Polygon level
-      let polygon = new Polygon(j);
-      for (let k = 0; k < sourceShapes[i][j].length; k++) {
-        // Point level
-        polygon.points.push(new Point(sourceShapes[i][j][k][0], sourceShapes[i][j][k][1]));
-      }
-      thiz.polygons.push(polygon);
-    }
-  }
 }
 
-SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta = 0) {
+HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta = 0) {
   var thiz = this;
-
-  // if (incr == 0 && dlambda == 0 && dphi == 0 && dtheta == 0) {
-  //   // reset
-  //   thiz.projection.lambda0 = 0;
-  //   thiz.projection.phi0 = 0;
-  //   thiz.projection.theta = 0;
-  // }
 
   thiz.iProjection += incr;
   while (thiz.iProjection < 0) {
@@ -121,96 +54,25 @@ SVGView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta 
   thiz.projection.lambda0 += dlambda;
   thiz.projection.phi0 += dphi;
   thiz.projection.theta += dtheta;
-  // thiz.projection.ct = Math.cos(thiz.projection.theta * Math.PI / 180);
-  // thiz.projection.st = Math.sin(thiz.projection.theta * Math.PI / 180);
 
   thiz.print("");
   thiz.print(thiz.projection.title);
   thiz.print(thiz.projection.description());
-  // // change description
-  // removeDOMChildren(thiz.description);
 
-  // // draw title
-  // let svgObj = document.createElementNS(svgNS, 'text');
-  // let col = 'rgba(0,0,0,0.7)';
-  //
-  // svgObj.setAttributeNS(null, "x", 0);
-  // svgObj.setAttributeNS(null, "y", 30);
-  // svgObj.setAttributeNS(null, "font-size", "15px"); //"30px");
-  // svgObj.setAttributeNS(null, "style", "fill:" + col);
-  // svgObj.setAttributeNS(null, "stroke", 'black');
-  // svgObj.setAttributeNS(null, "stroke-width", "0.01");
-  // svgObj.setAttributeNS(null, "height", "90px");
-  // svgObj.setAttributeNS(null, "viewwidth", window.innerWidth);
-  // svgObj.textContent = thiz.projection.title;
-  //
-  // let tbox = document.createElementNS(svgNS, 'tspan');
-  // tbox.textContent = thiz.projection.description();
-  // tbox.setAttributeNS(null, "x", 0);
-  // tbox.setAttributeNS(null, "dy", 20);
-  // tbox.setAttributeNS(null, "font-size", "15px");
-  // svgObj.appendChild(tbox);
-  //
-  // for (let i = 0; i < thiz.projection.properties.length; i++) {
-  //   let tbox = document.createElementNS(svgNS, 'tspan');
-  //   tbox.textContent = thiz.projection.properties[i];
-  //   tbox.setAttributeNS(null, "x", 0);
-  //   tbox.setAttributeNS(null, "dy", 15);
-  //   tbox.setAttributeNS(null, "font-size", "15px");
-  //   svgObj.appendChild(tbox);
-  // }
-
-  // let legend = document.createElementNS(svgNS, 'tspan');
-  // legend.setAttributeNS(null, "x", 5);
-  // legend.setAttributeNS(null, "y", window.innerHeight - 5);
-  // legend.setAttributeNS(null, "font-size", "15px");
-  // legend.textContent = "CONTROLS: MOUSE click&drag + wheel; KEYBOARD: left/right arrows + a/q + z/s + e/d";
-  // svgObj.appendChild(legend);
-
-  // thiz.description.appendChild(svgObj);
-
-  // lines
-  for (let i = 0; i < thiz.lines.length; i++) {
-    thiz.lines[i].project(thiz.projection.func);
-  }
-
-  // shapes
-  for (let i = 0; i < thiz.polygons.length; i++) {
-    thiz.polygons[i].project(thiz.projection.func);
-  }
+  thiz.svgMap.reProject(thiz.projection.func)
 }
 
-SVGView.prototype.update = function() {
+HTMLView.prototype.update = function() {
   var thiz = this;
-  // update lines
-  for (let i = 0; i < thiz.lines.length; i++) {
-    thiz.lines[i].update();
-  }
-
-  // update shapes
-  for (let i = 0; i < thiz.polygons.length; i++) {
-    thiz.polygons[i].update();
-  }
+  thiz.svgMap.update();
 }
 
-
-SVGView.prototype.draw = function() {
+HTMLView.prototype.draw = function() {
   var thiz = this;
-  removeDOMChildren(thiz.svg);
-
-  // draw shapes
-  for (let i = 0; i < thiz.polygons.length; i++) {
-    thiz.svg.appendChild(thiz.polygons[i].svg());
-  }
-
-  // draw lines
-  for (let i = 0; i < thiz.lines.length; i++) {
-    thiz.svg.appendChild(thiz.lines[i].svg());
-  }
+  thiz.svgMap.draw();
 }
 
-
-SVGView.prototype.setupInput = function() {
+HTMLView.prototype.setupInput = function() {
   // all events behavior here
   var thiz = this;
 
@@ -256,7 +118,7 @@ SVGView.prototype.setupInput = function() {
   }
 
   window.onresize = function(e) {
-    thiz.viewBox.resize();
+    thiz.svgMap.viewBox.resize();
     thiz.changeProj(0);
   }
 
@@ -264,39 +126,35 @@ SVGView.prototype.setupInput = function() {
 }
 
 
-SVGView.prototype.print = function(msg = "") {
+HTMLView.prototype.print = function(msg = "") {
   var thiz = this;
   thiz.console.textContent += `\n` + msg;
   thiz.console.scrollTop = thiz.console.scrollHeight;
 };
 
-SVGView.prototype.clrConsole = function() {
+HTMLView.prototype.clrConsole = function() {
   var thiz = this;
   thiz.console.textContent = "";
 };
 
-SVGView.prototype.touchInput = function() {
+HTMLView.prototype.touchInput = function() {
   var thiz = this;
   var dom = thiz.container;
 
   this.input = new Input(dom); // dom
   // this.inputThreshold = 40;
-
-
-
-
   move = function() {
     if (thiz.input.prevPos == null) {
       return;
     } else {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
-      thiz.viewBox.translate(-dx, -dy);
+      thiz.svgMap.viewBox.translate(-dx, -dy);
     }
   };
 
   zoom = function(k) {
-    thiz.viewBox.scale(thiz.input.curPos.x, thiz.input.curPos.y, k);
+    thiz.svgMap.viewBox.scale(thiz.input.curPos.x, thiz.input.curPos.y, k);
   };
 
   this.input.handle_mousedown = function(e) {
@@ -340,7 +198,7 @@ SVGView.prototype.touchInput = function() {
 
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
-    // thiz.print(thiz.input.msg);
+
     if (thiz.input.prevPos !== null) {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
@@ -371,7 +229,7 @@ SVGView.prototype.touchInput = function() {
 };
 
 
-SVGView.prototype.setupUpdate = function() {
+HTMLView.prototype.setupUpdate = function() {
   var thiz = this;
 
   var updateCB = function(timestamp) {
@@ -381,7 +239,7 @@ SVGView.prototype.setupUpdate = function() {
   updateCB(0);
 };
 
-SVGView.prototype.refresh = function(ts) {
+HTMLView.prototype.refresh = function(ts) {
   let now = Date.now();
   if (now - this.lastUpdate > 20) {
     this.lastUpdate = now;
@@ -390,56 +248,7 @@ SVGView.prototype.refresh = function(ts) {
   }
 };
 
-ViewBox = function(parentSvg) {
-  this.parentSvg = parentSvg;
-  this.box = [];
-
-  this.update = function() {}
-
-  this.draw = function() {
-    this.parentSvg.setAttributeNS(null, "viewBox", this.box.join(" "));
-  }
-
-  this.initSVG = function(style) {
-    this.box = [-180, -90, 360, 360 * window.innerHeight / window.innerWidth];
-    this.resize();
-    this.draw();
-  }
-
-  this.scale = function(x, y, fact = 1) {
-    let domRect = this.parentSvg.getBoundingClientRect();
-    let coorX = (x - domRect.left) / domRect.width * this.box[2] + this.box[0];
-    let coorY = (y - domRect.top) / domRect.height * this.box[3] + this.box[1];
-
-    this.box[0] = coorX - (coorX - this.box[0]) / fact;
-    this.box[1] = coorY - (coorY - this.box[1]) / fact;
-    this.box[2] /= fact;
-    this.box[3] /= fact;
-    this.draw();
-  }
-
-  this.translate = function(dx, dy) {
-    let domRect = this.parentSvg.getBoundingClientRect();
-    this.box[0] += dx / domRect.width * this.box[2];
-    this.box[1] += dy / domRect.height * this.box[3];
-    this.draw();
-  }
-
-  this.resize = function() {
-    // if (window.innerWidth > 700) {
-    // this.box[2] = window.innerWidth;
-    this.box[3] = this.box[2] * window.innerHeight / window.innerWidth;
-    this.draw();
-
-    // } else {
-    //   this.box[2] = window.innerWidth * 2;
-    //   this.box[3] = window.innerHeight * 2;
-    // }
-  }
-  this.initSVG();
-}
-
-SVGView.prototype.projectionFunction = function() {
+HTMLView.prototype.projectionFunction = function() {
   var thiz = this;
   // return EquiRectangularProjection(coordinates);
   // console.log(thiz.iProjection);

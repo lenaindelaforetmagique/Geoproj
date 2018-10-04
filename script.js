@@ -10,7 +10,7 @@ request.onload = function() {
   // coastlines.geometries[0].coordinates : Array of MultiPolygons
   // coastlines.geometries.coordinates[i] : Array of Polygons
 
-  var run = new SVGView(coastlines.geometries[0].coordinates);
+  var run = new HTMLView(coastlines.geometries[0].coordinates);
   // run.init();
 }
 
