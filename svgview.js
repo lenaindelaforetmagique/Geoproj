@@ -17,15 +17,12 @@ HTMLView = function(sourceShapes, coord = false) {
   this.svgMap = null;
   // this.description = null;
 
+  this.lambda0 = coord !== false ? coord[0] : 0;
+  this.phi0 = coord !== false ? coord[1] : 0;
+
   this.iProjection = 0;
   this.projection = ListOfProjections[0];
-  if (coord !== false) {
-    this.projection.lambda0 = coord[0];
-    this.projection.phi0 = coord[1];
-  }
   this.projTitle = "";
-
-
 
   this.lastUpdate = Date.now();
 
@@ -45,7 +42,7 @@ HTMLView.prototype.init = function(sourceShapes, coord) {
   thiz.bottom.appendChild(thiz.console);
 }
 
-HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta = 0) {
+HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   var thiz = this;
 
   thiz.iProjection += incr;
@@ -55,9 +52,11 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0, dtheta
   thiz.iProjection %= ListOfProjections.length;
   thiz.projection = ListOfProjections[thiz.iProjection];
 
-  thiz.projection.lambda0 += dlambda;
-  thiz.projection.phi0 += dphi;
-  thiz.projection.theta += dtheta;
+  thiz.phi0 = Math.max(-90, Math.min(90, thiz.phi0 + dphi));
+  thiz.lambda0 += dlambda;
+
+  thiz.projection.lambda0 = thiz.lambda0;
+  thiz.projection.phi0 = thiz.phi0;
 
   thiz.print("");
   thiz.print(thiz.projection.title);
@@ -84,30 +83,18 @@ HTMLView.prototype.setupInput = function() {
     // console.log(e.which);
     switch (e.which) {
       case 65: //a
-        thiz.changeProj(0, 1);
+        thiz.changeProj(0, 10);
         break;
       case 81: //q
-        thiz.changeProj(0, -1);
+        thiz.changeProj(0, -10);
         break;
       case 90: //z
-        thiz.changeProj(0, 0, 1);
+        thiz.changeProj(0, 0, 10);
         break;
       case 83: //s
-        thiz.changeProj(0, 0, -1);
-        break;
-      case 69: //e
-        thiz.changeProj(0, 0, 0, 1);
-        break;
-      case 68: //d
-        thiz.changeProj(0, 0, 0, -1);
+        thiz.changeProj(0, 0, -10);
         break;
 
-        // case 82: //r (reset)
-        //   thiz.changeProj(0, 0, 0, 0);
-        //   break;
-
-        // case 32: // space
-        //   break;
       case 37: // left arrow
         thiz.changeProj(-1);
         break;
@@ -165,7 +152,12 @@ HTMLView.prototype.touchInput = function() {
     if (thiz.input.prevPos !== null) {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
-      move(dx, dy);
+      if (e.shiftKey) {
+        thiz.changeProj(0, -dx, dy);
+      } else {
+        move(dx, dy);
+      }
+
       thiz.input.savePos();
     }
   };
@@ -186,12 +178,14 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
+    console.log(thiz.input.curPos);
     thiz.input.savePos();
     thiz.input.saveTouchSize();
   };
 
   this.input.handle_touchmove = function(e) {
     thiz.input.loadTouch(e);
+    thiz.input.hasMoved = true;
 
     if (thiz.input.prevPos !== null) {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
@@ -200,24 +194,31 @@ HTMLView.prototype.touchInput = function() {
       if (thiz.input.curSize > 0) {
         // more than 1 finger
         move(dx, dy);
-        thiz.input.savePos();
+
         if (thiz.input.prevSize > 0) {
           zoom(thiz.input.curSize / thiz.input.prevSize);
           thiz.input.saveTouchSize();
         }
-      } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
+      } else {
         // 1 finger + x-slide>20px
-        thiz.changeProj(-Math.sign(dx));
-        thiz.input.resetPos();
-        thiz.input.resetTouchSize();
+        thiz.changeProj(0, -dx, dy);
       }
+      thiz.input.savePos();
     }
   };
 
   this.input.handle_touchend = function(e) {
-    thiz.input.loadTouch(e);
+    if (!thiz.input.hasMoved) {
+      if (thiz.input.prevPos.x < window.innerWidth / 4) {
+        thiz.changeProj(-1);
+      } else if (thiz.input.prevPos.x > window.innerWidth * 3 / 4) {
+        thiz.changeProj(1);
+      }
+    }
+
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
+    thiz.input.hasMoved = false;
   };
 };
 

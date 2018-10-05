@@ -21,6 +21,7 @@ Input = function(dom) {
 
   this.prevSize = null;
   this.curSize = null;
+  this.hasMoved = false;
 
   var thiz = this;
 

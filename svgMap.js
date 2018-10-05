@@ -143,8 +143,17 @@ ViewBox = function(parentSvg) {
 
   this.init = function() {
     var thiz = this;
-    this.box = [-180, -90, 360, 360 * window.innerHeight / window.innerWidth];
-    this.resize();
+    if (window.innerHeight > window.innerWidth) {
+      var w = 1.5 * 360 / Math.PI;
+      var h = w * window.innerHeight / window.innerWidth;
+
+    } else {
+      var h = 1.5 * 360 / Math.PI;
+      var w = h * window.innerWidth / window.innerHeight;
+
+    }
+    this.box = [-w / 2, -h / 2, w, h];
+    this.draw();
   }
 
   this.draw = function() {

@@ -64,7 +64,7 @@ let Equirectangular = new Projection("Equirectangular", ["conique", "conforme", 
 Equirectangular.func = function(lambda, phi) {
   let x = lambda - Equirectangular.lambda0;
   let y = -phi;
-  return Equirectangular.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Equirectangular);
 
@@ -75,7 +75,7 @@ Mercator.func = function(lambda, phi) {
   let x = lambda;
   let y = -Math.log(Math.tan((45 + phi / 2) * deg_rad)) * rad_deg;
 
-  return Mercator.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Mercator);
 
@@ -97,7 +97,7 @@ Bonne.func = function(lambda, phi) {
   let x = k * (rho * Math.sin(e));
   let y = -k * (1 / Math.tan(phi1) - rho * Math.cos(e) - y0);
 
-  return Bonne.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Bonne);
 
@@ -112,7 +112,7 @@ Gall_stereographic.func = function(lambda, phi) {
   let r = sqr2 * rad_deg;
   let x = r * lambda / sqr2;
   let y = -r * (1 + sqr2 / 2) * Math.tan(phi / 2);
-  return Gall_stereographic.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Gall_stereographic);
 
@@ -121,7 +121,7 @@ let Lambert_cylindrical = new Projection("Lambert - cylindrical");
 Lambert_cylindrical.func = function(lambda, phi) {
   let x = lambda;
   let y = -(rad_deg) * Math.sin(phi * deg_rad);
-  return Lambert_cylindrical.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Lambert_cylindrical);
 
@@ -134,7 +134,7 @@ Eckert_II.func = function(lambda, phi) {
   let r = (90 / Math.PI) / Math.pow(4 / (6 * Math.PI), 0.5);
   let x = 2 * r * (lambda - Eckert_II.lambda0 * deg_rad) * Math.pow((4 - 3 * sin_phi) / (6 * Math.PI), 0.5);
   let y = -Math.sign(phi) * r * Math.pow(2 * Math.PI / 3, 0.5) * (2 - Math.pow(4 - 3 * sin_phi, 0.5));
-  return Eckert_II.rotate([x, y]);
+  return [x, y];
 }
 ListOfProjections.push(Eckert_II);
 
@@ -143,7 +143,7 @@ let Sinusoidal = new Projection("Sinusoidal");
 Sinusoidal.func = function(lambda, phi) {
   let x = lambda * Math.cos(phi * deg_rad);
   let y = -phi;
-  return Sinusoidal.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Sinusoidal);
 
@@ -171,7 +171,7 @@ Mollweide.func = function(lambda, phi) {
   let x = r * 2 * Math.pow(2, 0.5) / Math.PI * (lambda - 0) * Math.cos(teta);
   let y = -r * Math.pow(2, 0.5) * Math.sin(teta);
 
-  return Mollweide.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Mollweide);
 
@@ -190,7 +190,7 @@ Winkel_Tripel.func = function(lambda, phi) {
   let x = r * (lambda * Math.cos(phi1) + 2 * Math.cos(phi) * Math.sin(lambda / 2) / sinc_alpha) / 2;
   let y = -r * (phi + Math.sin(phi) / sinc_alpha) / 2;
 
-  return Winkel_Tripel.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Winkel_Tripel);
 
@@ -209,7 +209,7 @@ Stereographic.func = function(lambda, phi) {
   let y = r * (x_ / (1 - z_) - 1);
   let x = r * (y_ / (1 - z_) - 0);
 
-  return Stereographic.rotate([x, y]);
+  return [x, y];
 };
 ListOfProjections.push(Stereographic);
 
@@ -242,7 +242,7 @@ Postel.func = function(lambda, phi) {
   let x = r * rho * Math.sin(theta);
   let y = r * (rho * Math.cos(theta) - Math.PI / 2);
   // console.log(x, y);
-  return Postel.rotate([x, y]);
+  return [x, y];
 };
 
 ListOfProjections.push(Postel);
