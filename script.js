@@ -10,8 +10,18 @@ request.onload = function() {
   // coastlines.geometries[0].coordinates : Array of MultiPolygons
   // coastlines.geometries.coordinates[i] : Array of Polygons
 
-  var run = new HTMLView(coastlines.geometries[0].coordinates);
-  // run.init();
+  function success(pos) {
+    var crd = pos.coords;
+    console.log(crd.longitude, crd.latitude);
+    var run = new HTMLView(coastlines.geometries[0].coordinates, [crd.longitude, crd.latitude]);
+  }
+
+  function error(err) {
+    console.log("nope");
+    var run = new HTMLView(coastlines.geometries[0].coordinates);
+  }
+
+  navigator.geolocation.getCurrentPosition(success, error);
 }
 
 var requestURL = 'earth-coastlines-12.json';

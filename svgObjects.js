@@ -142,3 +142,38 @@ Polygon = function(pointList, level) {
 
   this.init(pointList, this.level);
 }
+
+Circle = function(coord) {
+  this.domObj = null;
+  this.point = null;
+
+  this.init = function(coord_) {
+    var thiz = this;
+    thiz.domObj = document.createElementNS(svgNS, 'circle');
+    let col = "yellow";
+    thiz.domObj.setAttributeNS(null, "r", "0.5");
+    thiz.domObj.setAttributeNS(null, "fill", col);
+    thiz.domObj.setAttributeNS(null, "stroke", 'black');
+    thiz.domObj.setAttributeNS(null, "stroke-width", "0.01");
+
+    thiz.point = new Point(coord_[0], coord_[1]);
+  }
+
+  this.update = function() {
+    var thiz = this;
+    thiz.point.update();
+  }
+
+  this.draw = function() {
+    var thiz = this;
+    thiz.domObj.setAttributeNS(null, "cx", thiz.point.xCur);
+    thiz.domObj.setAttributeNS(null, "cy", thiz.point.yCur);
+  }
+
+  this.reProject = function(projectionFunction) {
+    var thiz = this;
+    thiz.point.reProject(projectionFunction);
+  }
+
+  this.init(coord);
+}

@@ -8,7 +8,7 @@ removeDOMChildren = function(dom) {
 };
 
 
-HTMLView = function(sourceShapes) {
+HTMLView = function(sourceShapes, coord = false) {
   this.container = document.getElementById("container");
 
   this.bottom = document.getElementById("console");
@@ -25,16 +25,16 @@ HTMLView = function(sourceShapes) {
 
   this.lastUpdate = Date.now();
 
-  this.init(sourceShapes);
+  this.init(sourceShapes, coord);
   this.setupInput();
   this.changeProj();
   this.setupUpdate();
 }
 
 
-HTMLView.prototype.init = function(sourceShapes) {
+HTMLView.prototype.init = function(sourceShapes, coord) {
   var thiz = this;
-  thiz.svgMap = new SVGMap(sourceShapes);
+  thiz.svgMap = new SVGMap(sourceShapes, coord);
   thiz.container.appendChild(thiz.svgMap.domObj);
 
   thiz.console = document.createElement("textarea");
@@ -141,16 +141,10 @@ HTMLView.prototype.touchInput = function() {
   var thiz = this;
   var dom = thiz.container;
 
-  this.input = new Input(dom); // dom
-  // this.inputThreshold = 40;
-  move = function() {
-    if (thiz.input.prevPos == null) {
-      return;
-    } else {
-      let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
-      let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
-      thiz.svgMap.viewBox.translate(-dx, -dy);
-    }
+  this.input = new Input(dom);
+
+  move = function(dx, dy) {
+    thiz.svgMap.viewBox.translate(-dx, -dy);
   };
 
   zoom = function(k) {
@@ -159,29 +153,26 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_mousedown = function(e) {
     thiz.input.loadMouse(e);
-    // thiz.print(thiz.input.msg);
     thiz.input.savePos();
   };
 
   this.input.handle_mousemove = function(e) {
     thiz.input.loadMouse(e);
-    // thiz.print(thiz.input.prevPos);
     if (thiz.input.prevPos !== null) {
-      // thiz.print(thiz.input.msg);
-      move();
+      let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
+      let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
+      move(dx, dy);
       thiz.input.savePos();
     }
   };
 
   this.input.handle_mouseup = function(e) {
     thiz.input.loadMouse(e);
-    // thiz.print(thiz.input.msg);
     thiz.input.resetPos();
   };
 
   this.input.handle_wheel = function(e) {
     thiz.input.loadMouse(e);
-    // thiz.print(thiz.input.msg);
     let k = 1.1;
     if (e.deltaY > 0) {
       k = 1 / k;
@@ -191,7 +182,6 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
-    // thiz.print(thiz.input.msg);
     thiz.input.savePos();
     thiz.input.saveTouchSize();
   };
@@ -205,7 +195,7 @@ HTMLView.prototype.touchInput = function() {
 
       if (thiz.input.curSize > 0) {
         // more than 1 finger
-        move();
+        move(dx, dy);
         thiz.input.savePos();
         if (thiz.input.prevSize > 0) {
           zoom(thiz.input.curSize / thiz.input.prevSize);
@@ -213,7 +203,7 @@ HTMLView.prototype.touchInput = function() {
         }
       } else if (Math.abs(dx / dy) > 1 && Math.abs(dx) > 20) {
         // 1 finger + x-slide>20px
-        thiz.changeProj(Math.sign(dx));
+        thiz.changeProj(-Math.sign(dx));
         thiz.input.resetPos();
         thiz.input.resetTouchSize();
       }
@@ -222,7 +212,6 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_touchend = function(e) {
     thiz.input.loadTouch(e);
-    // thiz.print(thiz.input.msg);
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
   };
@@ -231,7 +220,6 @@ HTMLView.prototype.touchInput = function() {
 
 HTMLView.prototype.setupUpdate = function() {
   var thiz = this;
-
   var updateCB = function(timestamp) {
     thiz.refresh(timestamp);
     window.requestAnimationFrame(updateCB);
@@ -250,8 +238,5 @@ HTMLView.prototype.refresh = function(ts) {
 
 HTMLView.prototype.projectionFunction = function() {
   var thiz = this;
-  // return EquiRectangularProjection(coordinates);
-  // console.log(thiz.iProjection);
-  // console.log(ListOfProjections);
   return ListOfProjections[thiz.iProjection % ListOfProjections.length].func;
 }

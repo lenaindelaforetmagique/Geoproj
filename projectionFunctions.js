@@ -20,6 +20,7 @@ Projection = function(title, prop = []) {
   }
 };
 
+//==============================================================================
 var ListOfProjections = [];
 
 let Equirectangular = new Projection("Equirectangular", ["conique", "conforme", "ti"]);
@@ -30,6 +31,7 @@ Equirectangular.func = function(lambda, phi) {
 };
 ListOfProjections.push(Equirectangular);
 
+//==============================================================================
 let Mercator = new Projection("Mercator");
 Mercator.func = function(lambda, phi) {
 
@@ -41,6 +43,7 @@ Mercator.func = function(lambda, phi) {
 };
 ListOfProjections.push(Mercator);
 
+//==============================================================================
 let Bonne = new Projection("Bonne");
 Bonne.phi0 = 45;
 Bonne.func = function(lambda, phi) {
@@ -62,6 +65,7 @@ Bonne.func = function(lambda, phi) {
 };
 ListOfProjections.push(Bonne);
 
+//==============================================================================
 let Gall_stereographic = new Projection("Gall - stereographic");
 Gall_stereographic.func = function(lambda, phi) {
   lambda *= Math.PI / 180;
@@ -76,6 +80,7 @@ Gall_stereographic.func = function(lambda, phi) {
 };
 ListOfProjections.push(Gall_stereographic);
 
+//==============================================================================
 let Lambert_cylindrical = new Projection("Lambert - cylindrical");
 Lambert_cylindrical.func = function(lambda, phi) {
   let x = lambda;
@@ -84,6 +89,20 @@ Lambert_cylindrical.func = function(lambda, phi) {
 };
 ListOfProjections.push(Lambert_cylindrical);
 
+//==============================================================================
+let Eckert_II = new Projection("Eckert II");
+Eckert_II.func = function(lambda, phi) {
+  lambda *= Math.PI / 180;
+  phi *= Math.PI / 180;
+  let sin_phi = Math.sin(Math.abs(phi));
+  let r = (90 / Math.PI) / Math.pow(4 / (6 * Math.PI), 0.5);
+  let x = 2 * r * (lambda - Eckert_II.lambda0 * Math.PI / 180) * Math.pow((4 - 3 * sin_phi) / (6 * Math.PI), 0.5);
+  let y = -Math.sign(phi) * r * Math.pow(2 * Math.PI / 3, 0.5) * (2 - Math.pow(4 - 3 * sin_phi, 0.5));
+  return Eckert_II.rotate([x, y]);
+}
+ListOfProjections.push(Eckert_II);
+
+//==============================================================================
 let Sinusoidal = new Projection("Sinusoidal");
 Sinusoidal.func = function(lambda, phi) {
   let x = lambda * Math.cos(phi * Math.PI / 180);
@@ -92,6 +111,7 @@ Sinusoidal.func = function(lambda, phi) {
 };
 ListOfProjections.push(Sinusoidal);
 
+//==============================================================================
 let Mollweide = new Projection("Mollweide");
 Mollweide.func = function(lambda, phi) {
   lambda *= Math.PI / 180;
@@ -119,7 +139,7 @@ Mollweide.func = function(lambda, phi) {
 };
 ListOfProjections.push(Mollweide);
 
-
+//==============================================================================
 let Winkel_Tripel = new Projection("Winkel - Tripel");
 Winkel_Tripel.func = function(lambda, phi) {
   lambda *= Math.PI / 180;
@@ -138,6 +158,7 @@ Winkel_Tripel.func = function(lambda, phi) {
 };
 ListOfProjections.push(Winkel_Tripel);
 
+//==============================================================================
 let Stereographic = new Projection("Stereographic");
 Stereographic.func = function(lambda, phi) {
   phi = Math.max(phi, -80);
@@ -154,8 +175,43 @@ Stereographic.func = function(lambda, phi) {
 
   return Stereographic.rotate([x, y]);
 };
-
 ListOfProjections.push(Stereographic);
+
+//==============================================================================
+let Postel = new Projection("Azimuthal_equidistant_projection");
+Postel.phi0 = 90;
+Postel.lambda0 = 0;
+Postel.func = function(lambda, phi) {
+  lambda *= Math.PI / 180;
+  phi *= Math.PI / 180;
+  // let phi1 = Postel.phi0 * Math.PI / 180;
+  // let lambda0 = Postel.lambda0 * Math.PI / 180;
+  //
+  // let rho = Math.sin(phi1) * Math.sin(phi)
+  // rho += Math.cos(phi1) * Math.cos(phi) * Math.cos(lambda - lambda0);
+  // rho = Math.acos(rho);
+  //
+  // let theta = Math.cos(phi1) * Math.sin(phi);
+  // theta += -Math.sin(phi1) * Math.cos(phi) * Math.cos(lambda - lambda0);
+  // theta = Math.cos(phi) * Math.sin(lambda - lambda0) / theta;
+  // theta = Math.atan(theta);
+  // // console.log(theta);
+  //
+  // if (Math.abs(lambda - lambda0) > Math.PI / 2) {
+  //   theta += Math.PI;
+  // }
+  let r = 90;
+  let rho = Math.PI / 2 - phi;
+  let theta = lambda;
+  let x = r * rho * Math.sin(theta);
+  let y = r * (rho * Math.cos(theta) - Math.PI / 2);
+  // console.log(x, y);
+  return Postel.rotate([x, y]);
+};
+
+ListOfProjections.push(Postel);
+
+//==============================================================================
 // // ,
 // //
 // // Craig = function(lambda, phi) {

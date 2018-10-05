@@ -1,12 +1,13 @@
 var svgNS = "http://www.w3.org/2000/svg";
 
-SVGMap = function(shapes) {
+SVGMap = function(shapes, coord) {
   this.domObj = null;
 
   // components
   this.viewBox = null;
   this.polygons = null;
   this.lines = null;
+  this.point = null;
 
   this.update = function() {
     var thiz = this;
@@ -16,16 +17,22 @@ SVGMap = function(shapes) {
     for (let i = 0; i < thiz.lines.length; i++) {
       thiz.lines[i].update();
     }
+    if (thiz.point !== null) {
+      thiz.point.update();
+    }
   }
 
   this.draw = function() {
     var thiz = this;
-    thiz.viewBox.draw();
+    // thiz.viewBox.draw();
     for (let i = 0; i < thiz.polygons.length; i++) {
       thiz.polygons[i].draw();
     }
     for (let i = 0; i < thiz.lines.length; i++) {
       thiz.lines[i].draw();
+    }
+    if (thiz.point !== null) {
+      thiz.point.draw();
     }
   }
 
@@ -37,12 +44,15 @@ SVGMap = function(shapes) {
     for (let i = 0; i < thiz.lines.length; i++) {
       thiz.lines[i].reProject(projectionFunction);
     }
+    if (thiz.point !== null) {
+      thiz.point.reProject(projectionFunction);
+    }
   }
 
-  this.init(shapes);
+  this.init(shapes, coord);
 }
 
-SVGMap.prototype.init = function(sourceShapes) {
+SVGMap.prototype.init = function(sourceShapes, coord) {
   var thiz = this;
 
   thiz.domObj = document.createElementNS(svgNS, "svg");
@@ -103,6 +113,12 @@ SVGMap.prototype.init = function(sourceShapes) {
     thiz.lines.push(line);
     thiz.domObj.appendChild(line.domObj);
   }
+
+  // point
+  if (coord !== null) {
+    thiz.point = new Circle(coord);
+    thiz.domObj.appendChild(thiz.point.domObj)
+  }
 }
 
 ViewBox = function(parentSvg) {
@@ -130,6 +146,7 @@ ViewBox = function(parentSvg) {
     thiz.box[1] = coorY - (coorY - thiz.box[1]) / fact;
     thiz.box[2] /= fact;
     thiz.box[3] /= fact;
+    thiz.draw();
   }
 
   this.translate = function(dx, dy) {
@@ -137,11 +154,13 @@ ViewBox = function(parentSvg) {
     let domRect = thiz.parentSvg.getBoundingClientRect();
     thiz.box[0] += dx / domRect.width * thiz.box[2];
     thiz.box[1] += dy / domRect.height * thiz.box[3];
+    thiz.draw();
   }
 
   this.resize = function() {
     var thiz = this;
     thiz.box[3] = thiz.box[2] * window.innerHeight / window.innerWidth;
+    thiz.draw();
   }
 
   this.init();
