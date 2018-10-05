@@ -61,22 +61,38 @@ SVGMap.prototype.init = function(sourceShapes, coord) {
   // Create Polygons
   thiz.polygons = [];
   // Water background
-  let pointsList = [];
-  for (let lon = -180; lon < 180; lon += 1) {
-    pointsList.push([lon, -90]);
+  let dlon = 10;
+  let dlat = 5;
+  for (let lon = -180; lon < 180; lon += dlon) {
+    for (let lat = -90; lat < 90; lat += dlat) {
+      let pointsList = [];
+      pointsList.push([lon, lat]);
+      pointsList.push([lon + dlon, lat]);
+      pointsList.push([lon + dlon, lat + dlat]);
+      pointsList.push([lon, lat + dlat]);
+      pointsList.push([lon, lat]);
+      let waterBG = new Polygon(pointsList, 1);
+      thiz.polygons.push(waterBG);
+      thiz.domObj.appendChild(waterBG.domObj);
+    }
   }
-  for (let lat = -90; lat < 90; lat += 1) {
-    pointsList.push([180, lat]);
-  }
-  for (let lon = 180; lon > -180; lon -= 1) {
-    pointsList.push([lon, 90]);
-  }
-  for (let lat = 90; lat >= -90; lat -= 1) {
-    pointsList.push([-180, lat]);
-  }
-  let waterBG = new Polygon(pointsList, 1);
-  thiz.polygons.push(waterBG);
-  thiz.domObj.appendChild(waterBG.domObj);
+  //
+  // let pointsList = [];
+  // for (let lon = -180; lon < 180; lon += 1) {
+  //   pointsList.push([lon, -90]);
+  // }
+  // for (let lat = -90; lat < 90; lat += 1) {
+  //   pointsList.push([180, lat]);
+  // }
+  // for (let lon = 180; lon > -180; lon -= 1) {
+  //   pointsList.push([lon, 90]);
+  // }
+  // for (let lat = 90; lat >= -90; lat -= 1) {
+  //   pointsList.push([-180, lat]);
+  // }
+  // let waterBG = new Polygon(pointsList, 1);
+  // thiz.polygons.push(waterBG);
+  // thiz.domObj.appendChild(waterBG.domObj);
 
   // Loading shapes
   for (let i = 0; i < sourceShapes.length; i++) {

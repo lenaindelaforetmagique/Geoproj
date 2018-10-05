@@ -108,7 +108,9 @@ Polygon = function(pointList, level) {
     let col = thiz.level == 0 ? 'rgba(0,0,0,0.6)' : 'rgba(173,216,230,1)';
     thiz.domObj.setAttributeNS(null, "style", "fill:" + col);
     thiz.domObj.setAttributeNS(null, "stroke", 'black');
-    thiz.domObj.setAttributeNS(null, "stroke-width", "0.01");
+
+    let sw = thiz.level == 0 ? '0.01' : '0';
+    thiz.domObj.setAttributeNS(null, "stroke-width", sw);
 
     // Load points
     thiz.points = [];

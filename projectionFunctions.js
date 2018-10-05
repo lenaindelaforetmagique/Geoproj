@@ -1,3 +1,6 @@
+var deg_rad = Math.PI / 180;
+var rad_deg = 180 / Math.PI;
+
 Projection = function(title, prop = []) {
   // ProjectionSurface: none, Cylinder, Cone, Plane
   // Aspect: Normal, Transverse, Oblique
@@ -14,15 +17,49 @@ Projection = function(title, prop = []) {
   this.theta = 0;
 
   this.rotate = function(vect) {
-    let ct = Math.cos(this.theta * Math.PI / 180);
-    let st = Math.sin(this.theta * Math.PI / 180);
+    let ct = Math.cos(this.theta * deg_rad);
+    let st = Math.sin(this.theta * deg_rad);
     return [ct * vect[0] + st * vect[1], -st * vect[0] + ct * vect[1]];
   }
 };
 
-//==============================================================================
+
 var ListOfProjections = [];
 
+//==============================================================================
+let Orthographic = new Projection("Orthographic");
+Orthographic.func = function(lambda, phi) {
+  lambda *= deg_rad;
+  phi *= deg_rad;
+
+  let phi0 = Orthographic.phi0 * deg_rad;
+  let lambda0 = Orthographic.lambda0 * deg_rad;
+
+  let slam = Math.sin(lambda - lambda0);
+  let clam = Math.cos(lambda - lambda0);
+  let cphi = Math.cos(phi);
+  let sphi = Math.sin(phi);
+  let cphi0 = Math.cos(phi0);
+  let sphi0 = Math.sin(phi0);
+
+  let x = cphi * slam;
+  let y = (cphi0 * sphi - sphi0 * cphi * clam);
+
+  let cc = sphi0 * sphi + cphi0 * cphi * clam;
+  if (cc < 0) {
+    let n = Math.pow(x * x + y * y, 0.5);
+    x /= n;
+    y /= n;
+  }
+  let r = rad_deg;
+
+  x *= r;
+  y *= -r;
+  return [x, y];
+};
+ListOfProjections.push(Orthographic);
+
+//==============================================================================
 let Equirectangular = new Projection("Equirectangular", ["conique", "conforme", "ti"]);
 Equirectangular.func = function(lambda, phi) {
   let x = lambda - Equirectangular.lambda0;
@@ -34,10 +71,9 @@ ListOfProjections.push(Equirectangular);
 //==============================================================================
 let Mercator = new Projection("Mercator");
 Mercator.func = function(lambda, phi) {
-
   phi = Math.min(89, Math.max(-89, phi));
   let x = lambda;
-  let y = -Math.log(Math.tan((45 + phi / 2) * Math.PI / 180)) * 180 / Math.PI;
+  let y = -Math.log(Math.tan((45 + phi / 2) * deg_rad)) * rad_deg;
 
   return Mercator.rotate([x, y]);
 };
@@ -47,17 +83,17 @@ ListOfProjections.push(Mercator);
 let Bonne = new Projection("Bonne");
 Bonne.phi0 = 45;
 Bonne.func = function(lambda, phi) {
-  lambda = (lambda - Bonne.lambda0) * Math.PI / 180;
-  phi *= Math.PI / 180;
+  lambda = (lambda - Bonne.lambda0) * deg_rad;
+  phi *= deg_rad;
 
-  let phi1 = Bonne.phi0 * Math.PI / 180;
+  let phi1 = Bonne.phi0 * deg_rad;
   let rho = 1 / Math.tan(phi1) + phi1 - phi;
 
   // console.log(rho);
   let e = (lambda) / rho * Math.cos(phi);
 
   let y0 = (1 / Math.tan(phi1) - (1 / Math.tan(phi1) + phi1))
-  let k = 180 / Math.PI;
+  let k = rad_deg;
   let x = k * (rho * Math.sin(e));
   let y = -k * (1 / Math.tan(phi1) - rho * Math.cos(e) - y0);
 
@@ -68,12 +104,12 @@ ListOfProjections.push(Bonne);
 //==============================================================================
 let Gall_stereographic = new Projection("Gall - stereographic");
 Gall_stereographic.func = function(lambda, phi) {
-  lambda *= Math.PI / 180;
-  phi *= Math.PI / 180;
+  lambda *= deg_rad;
+  phi *= deg_rad;
 
   let sqr2 = Math.pow(2, 0.5);
 
-  let r = sqr2 * 180 / Math.PI;
+  let r = sqr2 * rad_deg;
   let x = r * lambda / sqr2;
   let y = -r * (1 + sqr2 / 2) * Math.tan(phi / 2);
   return Gall_stereographic.rotate([x, y]);
@@ -84,7 +120,7 @@ ListOfProjections.push(Gall_stereographic);
 let Lambert_cylindrical = new Projection("Lambert - cylindrical");
 Lambert_cylindrical.func = function(lambda, phi) {
   let x = lambda;
-  let y = -(180 / Math.PI) * Math.sin(phi * Math.PI / 180);
+  let y = -(rad_deg) * Math.sin(phi * deg_rad);
   return Lambert_cylindrical.rotate([x, y]);
 };
 ListOfProjections.push(Lambert_cylindrical);
@@ -92,11 +128,11 @@ ListOfProjections.push(Lambert_cylindrical);
 //==============================================================================
 let Eckert_II = new Projection("Eckert II");
 Eckert_II.func = function(lambda, phi) {
-  lambda *= Math.PI / 180;
-  phi *= Math.PI / 180;
+  lambda *= deg_rad;
+  phi *= deg_rad;
   let sin_phi = Math.sin(Math.abs(phi));
   let r = (90 / Math.PI) / Math.pow(4 / (6 * Math.PI), 0.5);
-  let x = 2 * r * (lambda - Eckert_II.lambda0 * Math.PI / 180) * Math.pow((4 - 3 * sin_phi) / (6 * Math.PI), 0.5);
+  let x = 2 * r * (lambda - Eckert_II.lambda0 * deg_rad) * Math.pow((4 - 3 * sin_phi) / (6 * Math.PI), 0.5);
   let y = -Math.sign(phi) * r * Math.pow(2 * Math.PI / 3, 0.5) * (2 - Math.pow(4 - 3 * sin_phi, 0.5));
   return Eckert_II.rotate([x, y]);
 }
@@ -105,7 +141,7 @@ ListOfProjections.push(Eckert_II);
 //==============================================================================
 let Sinusoidal = new Projection("Sinusoidal");
 Sinusoidal.func = function(lambda, phi) {
-  let x = lambda * Math.cos(phi * Math.PI / 180);
+  let x = lambda * Math.cos(phi * deg_rad);
   let y = -phi;
   return Sinusoidal.rotate([x, y]);
 };
@@ -114,8 +150,8 @@ ListOfProjections.push(Sinusoidal);
 //==============================================================================
 let Mollweide = new Projection("Mollweide");
 Mollweide.func = function(lambda, phi) {
-  lambda *= Math.PI / 180;
-  phi *= Math.PI / 180;
+  lambda *= deg_rad;
+  phi *= deg_rad;
 
   let teta = 0;
   if (Math.abs(phi) > Math.PI / 2 - 0.0001) {
@@ -142,15 +178,15 @@ ListOfProjections.push(Mollweide);
 //==============================================================================
 let Winkel_Tripel = new Projection("Winkel - Tripel");
 Winkel_Tripel.func = function(lambda, phi) {
-  lambda *= Math.PI / 180;
-  phi *= Math.PI / 180;
+  lambda *= deg_rad;
+  phi *= deg_rad;
 
   let alpha = Math.acos(Math.cos(phi) * Math.cos(lambda / 2));
   let phi1 = Math.acos(2 / Math.PI);
 
   let sinc_alpha = alpha == 0 ? 1 : Math.sin(alpha) / alpha;
 
-  let r = 180 / Math.PI;
+  let r = rad_deg;
   let x = r * (lambda * Math.cos(phi1) + 2 * Math.cos(phi) * Math.sin(lambda / 2) / sinc_alpha) / 2;
   let y = -r * (phi + Math.sin(phi) / sinc_alpha) / 2;
 
@@ -162,8 +198,8 @@ ListOfProjections.push(Winkel_Tripel);
 let Stereographic = new Projection("Stereographic");
 Stereographic.func = function(lambda, phi) {
   phi = Math.max(phi, -80);
-  lambda *= Math.PI / 180;
-  phi *= Math.PI / 180;
+  lambda *= deg_rad;
+  phi *= deg_rad;
 
   let x_ = Math.cos(lambda) * Math.cos(phi);
   let y_ = Math.sin(lambda) * Math.cos(phi);
@@ -182,10 +218,10 @@ let Postel = new Projection("Azimuthal_equidistant_projection");
 Postel.phi0 = 90;
 Postel.lambda0 = 0;
 Postel.func = function(lambda, phi) {
-  lambda *= Math.PI / 180;
-  phi *= Math.PI / 180;
-  // let phi1 = Postel.phi0 * Math.PI / 180;
-  // let lambda0 = Postel.lambda0 * Math.PI / 180;
+  lambda *= deg_rad;
+  phi *= deg_rad;
+  // let phi1 = Postel.phi0 * deg_rad;
+  // let lambda0 = Postel.lambda0 * deg_rad;
   //
   // let rho = Math.sin(phi1) * Math.sin(phi)
   // rho += Math.cos(phi1) * Math.cos(phi) * Math.cos(lambda - lambda0);
@@ -215,12 +251,12 @@ ListOfProjections.push(Postel);
 // // ,
 // //
 // // Craig = function(lambda, phi) {
-// //   lambda *= Math.PI / 180;
-// //   phi *= Math.PI / 180;
+// //   lambda *= deg_rad;
+// //   phi *= deg_rad;
 // //
 // //   let lambda0 = 0;
-// //   let phi0 = 10 * 180 / Math.PI;
-// //   let r = 180 / Math.PI;
+// //   let phi0 = 10 * rad_deg;
+// //   let r = rad_deg;
 // //   let x = (lambda - lambda0);
 // //   let y = Math.sin(phi) * Math.cos(x) - Math.tan(phi0) * Math.cos(phi);
 // //   if (Math.abs(Math.sin(x)) > 0.001) {

@@ -19,6 +19,10 @@ HTMLView = function(sourceShapes, coord = false) {
 
   this.iProjection = 0;
   this.projection = ListOfProjections[0];
+  if (coord !== false) {
+    this.projection.lambda0 = coord[0];
+    this.projection.phi0 = coord[1];
+  }
   this.projTitle = "";
 
 
