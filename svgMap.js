@@ -36,16 +36,16 @@ SVGMap = function(shapes, coord) {
     }
   }
 
-  this.reProject = function(projectionFunction) {
+  this.reProject = function(projection) {
     var thiz = this;
     for (let i = 0; i < thiz.polygons.length; i++) {
-      thiz.polygons[i].reProject(projectionFunction);
+      thiz.polygons[i].reProject(projection);
     }
     for (let i = 0; i < thiz.lines.length; i++) {
-      thiz.lines[i].reProject(projectionFunction);
+      thiz.lines[i].reProject(projection);
     }
     if (thiz.point !== null) {
-      thiz.point.reProject(projectionFunction);
+      thiz.point.reProject(projection);
     }
   }
 
@@ -129,6 +129,10 @@ SVGMap.prototype.init = function(sourceShapes, coord) {
     thiz.lines.push(line);
     thiz.domObj.appendChild(line.domObj);
   }
+
+  // Origin
+  let point = new Circle([0, 0], "gray");
+  thiz.domObj.appendChild(point.domObj);
 
   // point
   if (coord !== null) {

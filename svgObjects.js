@@ -40,8 +40,8 @@ Point = function(lam, phi) {
     this.yCur += this.dy;
   }
 
-  this.reProject = function(projFunction) {
-    let newCoor = projFunction(this.lambda, this.phi);
+  this.reProject = function(projection) {
+    let newCoor = projection.proj(this.lambda, this.phi);
     this.xTar = newCoor[0];
     this.yTar = newCoor[1];
   }
@@ -86,10 +86,10 @@ Line = function(pointList, level) {
     thiz.domObj.setAttributeNS(null, "points", list);
   }
 
-  this.reProject = function(projectionFunction) {
+  this.reProject = function(projection) {
     var thiz = this;
     for (let i = 0; i < thiz.points.length; i += 1) {
-      thiz.points[i].reProject(projectionFunction);
+      thiz.points[i].reProject(projection);
     }
   }
 
@@ -135,24 +135,23 @@ Polygon = function(pointList, level) {
     thiz.domObj.setAttributeNS(null, "points", list);
   }
 
-  this.reProject = function(projectionFunction) {
+  this.reProject = function(projection) {
     var thiz = this;
     for (let i = 0; i < thiz.points.length; i += 1) {
-      thiz.points[i].reProject(projectionFunction);
+      thiz.points[i].reProject(projection);
     }
   }
 
   this.init(pointList, this.level);
 }
 
-Circle = function(coord) {
+Circle = function(coord, color = "yellow") {
   this.domObj = null;
   this.point = null;
 
-  this.init = function(coord_) {
+  this.init = function(coord_, col) {
     var thiz = this;
     thiz.domObj = document.createElementNS(svgNS, 'circle');
-    let col = "yellow";
     thiz.domObj.setAttributeNS(null, "r", "0.5");
     thiz.domObj.setAttributeNS(null, "fill", col);
     thiz.domObj.setAttributeNS(null, "stroke", 'black');
@@ -172,10 +171,10 @@ Circle = function(coord) {
     thiz.domObj.setAttributeNS(null, "cy", thiz.point.yCur);
   }
 
-  this.reProject = function(projectionFunction) {
+  this.reProject = function(projection) {
     var thiz = this;
-    thiz.point.reProject(projectionFunction);
+    thiz.point.reProject(projection);
   }
 
-  this.init(coord);
+  this.init(coord, color);
 }

@@ -53,16 +53,22 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   thiz.projection = ListOfProjections[thiz.iProjection];
 
   thiz.phi0 = Math.max(-90, Math.min(90, thiz.phi0 + dphi));
-  thiz.lambda0 += dlambda;
 
-  thiz.projection.lambda0 = thiz.lambda0;
-  thiz.projection.phi0 = thiz.phi0;
+  thiz.lambda0 += dlambda;
+  while (thiz.lambda0 < -180) {
+    thiz.lambda0 += 360;
+  }
+  while (thiz.lambda0 > 180) {
+    thiz.lambda0 -= 360;
+  }
+
+  thiz.projection.setProj(thiz.lambda0, thiz.phi0);
 
   thiz.print("");
   thiz.print(thiz.projection.title);
   thiz.print(thiz.projection.description());
 
-  thiz.svgMap.reProject(thiz.projection.func)
+  thiz.svgMap.reProject(thiz.projection)
 }
 
 HTMLView.prototype.update = function() {
@@ -82,7 +88,7 @@ HTMLView.prototype.setupInput = function() {
   document.onkeydown = function(e) {
     // console.log(e.which);
     switch (e.which) {
-      case 65: //a
+      case 68: //a
         thiz.changeProj(0, 10);
         break;
       case 81: //q
@@ -142,6 +148,12 @@ HTMLView.prototype.touchInput = function() {
     thiz.svgMap.viewBox.scale(thiz.input.curPos.x, thiz.input.curPos.y, k);
   };
 
+  changeOrigin = function(dx, dy) {
+    let domRect = thiz.svgMap.domObj.getBoundingClientRect();
+    let k = domRect.width / thiz.svgMap.viewBox.box[2];
+    thiz.changeProj(0, dx / k, dy / k);
+  }
+
   this.input.handle_mousedown = function(e) {
     thiz.input.loadMouse(e);
     thiz.input.savePos();
@@ -153,7 +165,7 @@ HTMLView.prototype.touchInput = function() {
       let dx = thiz.input.curPos.x - thiz.input.prevPos.x;
       let dy = thiz.input.curPos.y - thiz.input.prevPos.y;
       if (e.shiftKey) {
-        thiz.changeProj(0, -dx, dy);
+        changeOrigin(-dx, dy);
       } else {
         move(dx, dy);
       }
@@ -201,7 +213,7 @@ HTMLView.prototype.touchInput = function() {
         }
       } else {
         // 1 finger + x-slide>20px
-        thiz.changeProj(0, -dx, dy);
+        changeOrigin(-dx, dy);
       }
       thiz.input.savePos();
     }
@@ -240,8 +252,3 @@ HTMLView.prototype.refresh = function(ts) {
     this.draw();
   }
 };
-
-HTMLView.prototype.projectionFunction = function() {
-  var thiz = this;
-  return ListOfProjections[thiz.iProjection % ListOfProjections.length].func;
-}
