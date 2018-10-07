@@ -12,12 +12,10 @@ request.onload = function() {
 
   function success(pos) {
     var crd = pos.coords;
-    console.log(crd.longitude, crd.latitude);
     var run = new HTMLView(coastlines.geometries[0].coordinates, [crd.longitude, crd.latitude]);
   }
 
   function error(err) {
-    console.log("nope");
     var run = new HTMLView(coastlines.geometries[0].coordinates);
   }
 

@@ -1,14 +1,71 @@
-Coastlines
+GeoProj
+=======
 
-https://github.com/simonepri/geo-maps/blob/master/info/earth-coastlines.md
+A nice viewer for [Map projections][MapProjwikipedia].
 
-https://mapshaper.org/?files=https://cdn.rawgit.com/simonepri/geo-maps/master/previews/earth-coastlines.geo.json
+**[See it here!](https://lenaindelaforetmagique.github.io/Geoproj/)**
 
-# Precision:
+## Controls
+
+### Mouse
+- click & move : slide the view.
+- wheel : zoom in/out.
+- SHIFT + click & move : change center of projection.
+
+### Keyboard
+- left/right arrow to change projection.
+- q/d : change longitude center of projection.
+- s/z : change latitude center of projection.
+
+### Touch
+- two-fingers-move : like any photo viewer : slide + zoom.
+- one-finger-move : change center of projection.
+- one-finger-click :
+  - left-quarter of the screen : previous projection.
+  - right-quarter of the screen : next projection.
+
+
+## Screenshot!
+
+![Screenshot](screenshot.png)
+
+## List of computed projections
+A [list of numerous map projections][MapProjListwikipedia].
+
+The list of map projections computed here:
+- Orthographic
+- Equirectangular
+- Mercator
+- Bonne
+- Gall-stereographic
+- Lambert-cylindrical
+- Eckert II
+- Sinusoidal
+- Mollweide
+- Winkel-Tripel
+- Stereographic
+- Azimuthal equidistant
+
+
+<!-- ## Coastlines
+
+Earth coastlines
+
 earth-coastline-12.json : 12.5%
 earth-coastline-25.json : 25%
 earth-coastline-50.json : 50%
-earth-coastline-100.json : 100%
+earth-coastline-100.json : 100% -->
 
 
-https://fr.wikipedia.org/wiki/Liste_de_projections_cartographiques
+License
+=======
+
+_Geoproj_ is licensed under the [MIT License](LICENSE). Distribute and modify at will!
+
+Coastlines data come from [geo-maps][https://github.com/simonepri/geo-maps/], MIT License.
+
+Ubuntu Mono font from [Google Fonts](https://fonts.google.com/specimen/Ubuntu+Mono), distributed under the [SIL Open Font License, 1.1](http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
+
+
+[MapProjwikipedia]:https://en.wikipedia.org/wiki/Map_projection
+[MapProjListwikipedia]:https://en.wikipedia.org/wiki/List_of_map_projections

@@ -108,6 +108,10 @@ HTMLView.prototype.setupInput = function() {
     thiz.svgText.resize();
   }
 
+  thiz.svgText.controlText.onclick = function(e) {
+    thiz.svgText.changeText();
+  }
+
   thiz.touchInput();
 }
 
@@ -146,7 +150,6 @@ HTMLView.prototype.touchInput = function() {
       } else {
         move(dx, dy);
       }
-
       thiz.input.savePos();
     }
   };
@@ -197,7 +200,9 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_touchend = function(e) {
     if (!thiz.input.hasMoved) {
-      if (thiz.input.prevPos.x < window.innerWidth / 4) {
+      if (thiz.input.prevPos.y < 80) {
+        thiz.svgText.changeText();
+      } else if (thiz.input.prevPos.x < window.innerWidth / 4) {
         thiz.changeProj(-1);
       } else if (thiz.input.prevPos.x > window.innerWidth * 3 / 4) {
         thiz.changeProj(1);

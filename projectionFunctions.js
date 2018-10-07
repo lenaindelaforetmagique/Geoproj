@@ -18,7 +18,9 @@ Projection = function(projObj) {
     var round = function(x) {
       return Number.parseFloat(x).toFixed(2);
     };
-    return `lambda0:${round(this.lambda0)}, phi0:${round(this.phi0)}`;
+    let lam = "lambda"; //String.fromCharCode(955);
+    let phi = "phi"; //String.fromCharCode(981);
+    return `{${lam}0: ${round(this.lambda0)}, ${phi}0: ${round(this.phi0)}}`;
   };
 
   this.setProj = function(lambda, phi) {
@@ -280,7 +282,7 @@ var vMax = -1000;
 
 //==============================================================================
 proj = {
-  title: "Azimuthal_equidistant_projection",
+  title: "Azimuthal equidistant",
   prop: "",
   func: function(lambda, phi, lambda0, phi0) {
     lambda -= lambda0
@@ -292,7 +294,6 @@ proj = {
     rho += Math.cos(phi0) * Math.cos(phi) * Math.cos(lambda);
     rho = Math.acos(rho);
     // rho = Math.abs(rho);
-
 
     let theta = Math.cos(phi0) * Math.sin(phi);
     theta -= Math.sin(phi0) * Math.cos(phi) * Math.cos(lambda);
