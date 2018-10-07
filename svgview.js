@@ -8,17 +8,14 @@ removeDOMChildren = function(dom) {
 };
 
 
-HTMLView = function(sourceShapes, coord = false) {
+HTMLView = function(sourceShapes, coord = [0, 0]) {
   this.container = document.getElementById("container");
 
-  this.bottom = document.getElementById("console");
-  this.console = null;
-
   this.svgMap = null;
-  // this.description = null;
+  this.svgText = null;
 
-  this.lambda0 = coord !== false ? coord[0] : 0;
-  this.phi0 = coord !== false ? coord[1] : 0;
+  this.lambda0 = coord[0];
+  this.phi0 = coord[1];
 
   this.iProjection = 0;
   this.projection = ListOfProjections[0];
@@ -38,8 +35,8 @@ HTMLView.prototype.init = function(sourceShapes, coord) {
   thiz.svgMap = new SVGMap(sourceShapes, coord);
   thiz.container.appendChild(thiz.svgMap.domObj);
 
-  thiz.console = document.createElement("textarea");
-  thiz.bottom.appendChild(thiz.console);
+  thiz.svgText = new SVGText();
+  thiz.container.appendChild(thiz.svgText.domObj);
 }
 
 HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
@@ -52,8 +49,8 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   thiz.iProjection %= ListOfProjections.length;
   thiz.projection = ListOfProjections[thiz.iProjection];
 
-  thiz.phi0 = Math.max(-90, Math.min(90, thiz.phi0 + dphi));
 
+  thiz.phi0 = Math.max(-90, Math.min(90, thiz.phi0 + dphi));
   thiz.lambda0 += dlambda;
   while (thiz.lambda0 < -180) {
     thiz.lambda0 += 360;
@@ -63,11 +60,7 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   }
 
   thiz.projection.setProj(thiz.lambda0, thiz.phi0);
-
-  thiz.print("");
-  thiz.print(thiz.projection.title);
-  thiz.print(thiz.projection.description());
-
+  thiz.svgText.setProj(thiz.projection);
   thiz.svgMap.reProject(thiz.projection)
 }
 
@@ -100,39 +93,23 @@ HTMLView.prototype.setupInput = function() {
       case 83: //s
         thiz.changeProj(0, 0, -10);
         break;
-
       case 37: // left arrow
         thiz.changeProj(-1);
         break;
-        // case 38: // up arrow
-        //   break;
       case 39: // right arrow
         thiz.changeProj(1);
         break;
-        // case 40: // down arrow
-        //   break;
     }
   }
 
   window.onresize = function(e) {
     thiz.svgMap.viewBox.resize();
     thiz.changeProj(0);
+    thiz.svgText.resize();
   }
 
   thiz.touchInput();
 }
-
-
-HTMLView.prototype.print = function(msg = "") {
-  var thiz = this;
-  thiz.console.textContent += `\n` + msg;
-  thiz.console.scrollTop = thiz.console.scrollHeight;
-};
-
-HTMLView.prototype.clrConsole = function() {
-  var thiz = this;
-  thiz.console.textContent = "";
-};
 
 HTMLView.prototype.touchInput = function() {
   var thiz = this;
@@ -190,7 +167,6 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_touchstart = function(e) {
     thiz.input.loadTouch(e);
-    console.log(thiz.input.curPos);
     thiz.input.savePos();
     thiz.input.saveTouchSize();
   };

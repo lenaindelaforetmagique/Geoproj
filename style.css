@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: 'Ubuntu Mono', monospace;
   /* width: 100%; */
   /* overflow: hidden; */
 }
@@ -10,45 +11,36 @@ p {
   margin: 0;
   padding: 0;
   line-height: 1;
-  font-family: "Courier New";
+  /* font-family: "Courier New"; */
   font-size: 10px;
 }
 
 svg {
   margin: 0;
   padding: 0;
-  /* }
+}
 
-#legend { */
-  /* position: absolute;
+svg, legend {
+  position: absolute;
   left: 0px;
-  top: 0px; */
-  /* height: 100%;
-  width: 100%; */
+  top: 0px;
+  height: 100%;
+  width: 100%;
 }
 
 text {
-  font-family: "Courier New";
+  /* font-family: "Courier New"; */
 }
 
 #container {
   margin: 0;
   padding: 0;
   background: #EEEEEE;
-  height: 90%;
+  height: 100%;
   overflow: hidden;
 }
 
 textarea {
   height: 100%;
   width: 100%;
-}
-
-#console {
-  margin: 0;
-  padding: 0;
-  background: #CCCCCC;
-  height: 10%;
-  overflow: scroll;
-  /* hidden; */
 }

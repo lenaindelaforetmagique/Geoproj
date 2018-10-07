@@ -14,7 +14,11 @@ Projection = function(projObj) {
   this.center = [0, 0];
 
   this.description = function() {
-    return `lambda0:${this.lambda0}, phi0:${this.phi0}`;
+
+    var round = function(x) {
+      return Number.parseFloat(x).toFixed(2);
+    };
+    return `lambda0:${round(this.lambda0)}, phi0:${round(this.phi0)}`;
   };
 
   this.setProj = function(lambda, phi) {
@@ -293,14 +297,16 @@ proj = {
     let theta = Math.cos(phi0) * Math.sin(phi);
     theta -= Math.sin(phi0) * Math.cos(phi) * Math.cos(lambda);
     theta = Math.cos(phi) * Math.sin(lambda) / theta;
-    // theta = Math.atan(theta);
-    if (Number.isNaN(Math.atan(theta))) {
+    theta = Math.atan(theta);
+    if (Number.isNaN(theta)) {
       var x = 0;
       var y = 0;
     } else {
-      theta = Math.pow(theta, 2);
-      let sin_theta = Math.sqrt(theta / (1 + theta));
-      let cos_theta = Math.sqrt(1 / (1 + theta));
+      // theta = Math.pow(theta, 2);
+      // let sin_theta = Math.sqrt(theta / (1 + theta));
+      // let cos_theta = Math.sqrt(1 / (1 + theta));
+      let sin_theta = Math.sin(theta);
+      let cos_theta = Math.cos(theta);
 
       var x = -rho * sin_theta;
       var y = -rho * cos_theta;
