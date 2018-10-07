@@ -62,7 +62,7 @@ License
 
 _Geoproj_ is licensed under the [MIT License](LICENSE). Distribute and modify at will!
 
-Coastlines data come from [geo-maps][https://github.com/simonepri/geo-maps], MIT License.
+Coastlines data come from [geo-maps](https://github.com/simonepri/geo-maps), MIT License.
 
 Ubuntu Mono font from [Google Fonts](https://fonts.google.com/specimen/Ubuntu+Mono), distributed under the [SIL Open Font License, 1.1](http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
 
