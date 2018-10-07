@@ -5,6 +5,10 @@ A nice viewer for [Map projections][MapProjwikipedia].
 
 **[See it here!](https://lenaindelaforetmagique.github.io/Geoproj/)**
 
+## Screenshot!
+
+![Screenshot](screenshot.png)
+
 ## Controls
 
 ### Mouse
@@ -24,10 +28,10 @@ A nice viewer for [Map projections][MapProjwikipedia].
   - left-quarter of the screen : previous projection.
   - right-quarter of the screen : next projection.
 
+### Query string
+Query argument may be added to URL after '?':
+- res=x : x in {12, 25, 50, 100} to specify the resolution.
 
-## Screenshot!
-
-![Screenshot](screenshot.png)
 
 ## List of computed projections
 A [list of numerous map projections][MapProjListwikipedia].

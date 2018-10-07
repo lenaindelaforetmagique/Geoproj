@@ -285,6 +285,41 @@ proj = {
   title: "Azimuthal equidistant",
   prop: "",
   func: function(lambda, phi, lambda0, phi0) {
+
+    var ortho = function(lambda, phi, lambda0, phi0) {
+      lambda *= deg_rad;
+      phi *= deg_rad;
+
+      phi0 *= deg_rad;
+      lambda0 *= deg_rad;
+
+      let slam = Math.sin(lambda - lambda0);
+      let clam = Math.cos(lambda - lambda0);
+      let cphi = Math.cos(phi);
+      let sphi = Math.sin(phi);
+      let cphi0 = Math.cos(phi0);
+      let sphi0 = Math.sin(phi0);
+
+      let x = cphi * slam;
+      let y = (cphi0 * sphi - sphi0 * cphi * clam);
+
+      let cc = sphi0 * sphi + cphi0 * cphi * clam;
+      if (cc < 0) {
+        let n = Math.sqrt(x * x + y * y);
+        x /= n;
+        y /= n;
+      }
+      let r = rad_deg;
+
+      x *= r;
+      y *= -r;
+      return [x, y];
+    };
+
+    var res0 = ortho(lambda0, phi0, lambda0, phi0);
+    var res1 = ortho(lambda, phi, lambda0, phi0);
+    var res = [res1[0] - res0[0], res1[1] - res0[1]];
+
     lambda -= lambda0
     lambda *= deg_rad;
     phi *= deg_rad;
@@ -299,6 +334,7 @@ proj = {
     theta -= Math.sin(phi0) * Math.cos(phi) * Math.cos(lambda);
     theta = Math.cos(phi) * Math.sin(lambda) / theta;
     theta = Math.atan(theta);
+
     if (Number.isNaN(theta)) {
       var x = 0;
       var y = 0;
@@ -311,6 +347,13 @@ proj = {
 
       var x = -rho * sin_theta;
       var y = -rho * cos_theta;
+    }
+
+    // sign correction with ortho result, ugly but works...
+    if (res[1] > 0) {
+      y *= -1;
+    } else {
+      x *= -1;
     }
 
     x *= rad_deg;

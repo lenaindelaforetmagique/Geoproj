@@ -22,7 +22,31 @@ request.onload = function() {
   navigator.geolocation.getCurrentPosition(success, error);
 }
 
-var requestURL = 'earth-coastlines-12.json';
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    if (pair[0] == variable) {
+      return pair[1];
+    }
+  }
+  return (false);
+}
+
+// resolution
+let res = parseInt(getQueryVariable("res"));
+if (!res || res < 25) {
+  var requestURL = 'earth-coastlines-12.json';
+} else if (res < 50) {
+  var requestURL = 'earth-coastlines-25.json';
+} else if (res < 100) {
+  var requestURL = 'earth-coastlines-50.json';
+} else {
+  var requestURL = 'earth-coastlines-100.json';
+}
+
+
 request.open('GET', requestURL);
 request.responseType = 'json';
 request.send();
