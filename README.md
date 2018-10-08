@@ -31,6 +31,7 @@ A nice viewer for [Map projections][MapProjwikipedia].
 ### Query string
 Query argument may be added to URL after '?':
 - res=x : x in {12, 25, 50, 100} to specify the resolution.
+- file=fileName.json : a "well" formated geojson file.
 
 
 ## List of computed projections

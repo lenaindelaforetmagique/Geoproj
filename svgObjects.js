@@ -152,7 +152,7 @@ Circle = function(coord, color = "yellow") {
   this.init = function(coord_, col) {
     var thiz = this;
     thiz.domObj = document.createElementNS(svgNS, 'circle');
-    thiz.domObj.setAttributeNS(null, "r", "0.5");
+    thiz.domObj.setAttributeNS(null, "r", "0.05");
     thiz.domObj.setAttributeNS(null, "fill", col);
     thiz.domObj.setAttributeNS(null, "stroke", 'black');
     thiz.domObj.setAttributeNS(null, "stroke-width", "0.01");

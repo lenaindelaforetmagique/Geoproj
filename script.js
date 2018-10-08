@@ -35,16 +35,22 @@ function getQueryVariable(variable) {
 }
 
 // resolution
-let res = parseInt(getQueryVariable("res"));
-if (!res || res < 25) {
-  var requestURL = 'earth-coastlines-12.json';
-} else if (res < 50) {
-  var requestURL = 'earth-coastlines-25.json';
-} else if (res < 100) {
-  var requestURL = 'earth-coastlines-50.json';
-} else {
-  var requestURL = 'earth-coastlines-100.json';
+
+let requestURL = getQueryVariable("file");
+if (!requestURL) {
+  let res = parseInt(getQueryVariable("res"));
+  if (!res || res < 25) {
+    requestURL = 'earth-coastlines-12.json';
+  } else if (res < 50) {
+    requestURL = 'earth-coastlines-25.json';
+  } else if (res < 100) {
+    requestURL = 'earth-coastlines-50.json';
+  } else {
+    requestURL = 'earth-coastlines-100.json';
+  }
 }
+
+console.log(requestURL);
 
 
 request.open('GET', requestURL);
