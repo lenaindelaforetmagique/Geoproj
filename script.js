@@ -1,25 +1,39 @@
 // reading of .JSON file
-
 var request = new XMLHttpRequest();
 request.onload = function() {
   var coastlines = request.response;
-  // see http://geojson.org/
-  // coastlines : object
-  // coastlines.geometries : Array of objects
-  // coastlines.geometries[0] : object
-  // coastlines.geometries[0].coordinates : Array of MultiPolygons
-  // coastlines.geometries.coordinates[i] : Array of Polygons
+
+  var multiPolygons = getGeoJsonObj(coastlines, "MultiPolygon");
+  var polygons = getGeoJsonObj(coastlines, "Polygon");
+  for (let i = 0; i < polygons.length; i++) {
+    multiPolygons.push([polygons[i]]);
+  }
 
   function success(pos) {
     var crd = pos.coords;
-    var run = new HTMLView(coastlines.geometries[0].coordinates, [crd.longitude, crd.latitude]);
+    var run = new HTMLView(multiPolygons, [crd.longitude, crd.latitude]);
   }
 
   function error(err) {
-    var run = new HTMLView(coastlines.geometries[0].coordinates);
+    var run = new HTMLView(soSend);
   }
 
   navigator.geolocation.getCurrentPosition(success, error);
+}
+
+function getGeoJsonObj(o, type) {
+  // returns an Arry of every type-objects
+  if (o.type == type) {
+    return o.coordinates;
+  } else {
+    let r = [];
+    for (var p in o) {
+      if (typeof(o[p]) == "object") {
+        r = r.concat(getGeoJsonObj(o[p], type));
+      }
+    }
+    return r;
+  }
 }
 
 function getQueryVariable(variable) {
