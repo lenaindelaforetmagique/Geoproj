@@ -259,18 +259,38 @@ proj = {
   title: "Stereographic",
   prop: "",
   func: function(lambda, phi, lambda0, phi0) {
-    phi = Math.max(phi, -80);
-    lambda -= lambda0;
+    phi = Math.max(phi, -89);
+    phi = Math.min(phi, 89);
     lambda *= deg_rad;
     phi *= deg_rad;
 
-    let x_ = Math.cos(lambda) * Math.cos(phi);
-    let y_ = Math.sin(lambda) * Math.cos(phi);
-    let z_ = -Math.sin(phi);
+    lambda0 *= deg_rad;
+    phi0 *= deg_rad;
+
+    let cphi = Math.cos(phi);
+    let sphi = Math.sin(phi);
+    let clam = Math.cos(lambda);
+    let slam = Math.sin(lambda);
+
+    let cphi0 = Math.cos(phi0);
+    let sphi0 = Math.sin(phi0);
+    let clam0 = Math.cos(lambda0);
+    let slam0 = Math.sin(lambda0);
+
+    let u = [-slam0, clam0, 0];
+    let v = [-sphi0 * clam0, -sphi0 * slam0, cphi0];
+    let w = [-cphi0 * clam0, -cphi0 * slam0, -sphi0];
+
+    let pt = [clam * cphi, slam * cphi, sphi];
+
+    let x_ = u[0] * pt[0] + u[1] * pt[1] + u[2] * pt[2];
+    let y_ = v[0] * pt[0] + v[1] * pt[1] + v[2] * pt[2];
+    let z_ = w[0] * pt[0] + w[1] * pt[1] + w[2] * pt[2];
 
     let r = 90;
-    let y = r * (x_ / (1 - z_) - 1);
-    let x = r * (y_ / (1 - z_) - 0);
+    z_ = Math.min(0.9999, z_);
+    let x = r * x_ / (1 - z_);
+    let y = -r * y_ / (1 - z_);
 
     return [x, y];
   }

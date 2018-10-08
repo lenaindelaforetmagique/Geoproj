@@ -60,7 +60,6 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
     thiz.lambda0 -= 360;
     thiz.lambda0 = Math.floor(thiz.lambda0 / 10) * 10;
   }
-  console.log(thiz.lambda0);
 
   thiz.projection.setProj(thiz.lambda0, thiz.phi0);
   thiz.svgText.setProj(thiz.projection);
