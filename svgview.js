@@ -8,8 +8,10 @@ removeDOMChildren = function(dom) {
 };
 
 
-HTMLView = function(sourceShapes, coord = [0, 0]) {
+HTMLView = function(sourceShapes, coord = [0, 0], animated = true) {
   this.container = document.getElementById("container");
+  this.animated = animated;
+  this.hasChanged = false;
 
   this.svgMap = null;
   this.svgText = null;
@@ -49,7 +51,6 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   thiz.iProjection %= ListOfProjections.length;
   thiz.projection = ListOfProjections[thiz.iProjection];
 
-
   thiz.phi0 = Math.max(-90, Math.min(90, thiz.phi0 + dphi));
   thiz.lambda0 += dlambda;
   while (thiz.lambda0 < -180) {
@@ -64,11 +65,13 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   thiz.projection.setProj(thiz.lambda0, thiz.phi0);
   thiz.svgText.setProj(thiz.projection);
   thiz.svgMap.reProject(thiz.projection)
+
+  thiz.hasChanged = true;
 }
 
 HTMLView.prototype.update = function() {
   var thiz = this;
-  thiz.svgMap.update();
+  thiz.svgMap.update(thiz.animated);
 }
 
 HTMLView.prototype.draw = function() {
@@ -83,17 +86,17 @@ HTMLView.prototype.setupInput = function() {
   document.onkeydown = function(e) {
     // console.log(e.which);
     switch (e.which) {
-      case 68: //a
-        thiz.changeProj(0, 10);
+      case 68: //d
+        thiz.changeProj(0, 0, -10);
         break;
-      case 81: //q
-        thiz.changeProj(0, -10);
-        break;
-      case 90: //z
+      case 69: //e
         thiz.changeProj(0, 0, 10);
         break;
+      case 70: //f
+        thiz.changeProj(0, 10);
+        break;
       case 83: //s
-        thiz.changeProj(0, 0, -10);
+        thiz.changeProj(0, -10);
         break;
       case 37: // left arrow
         thiz.changeProj(-1);
@@ -210,7 +213,6 @@ HTMLView.prototype.touchInput = function() {
         thiz.changeProj(1);
       }
     }
-
     thiz.input.resetPos();
     thiz.input.resetTouchSize();
     thiz.input.hasMoved = false;
@@ -227,10 +229,23 @@ HTMLView.prototype.setupUpdate = function() {
   updateCB(0);
 };
 
+HTMLView.prototype.needRefresh = function() {
+  if (this.animated) {
+    let now = Date.now();
+    if (now - this.lastUpdate > 20) {
+      this.lastUpdate = now;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (this.hasChanged) {
+    this.hasChanged = false;
+    return true;
+  }
+}
+
 HTMLView.prototype.refresh = function(ts) {
-  let now = Date.now();
-  if (now - this.lastUpdate > 20) {
-    this.lastUpdate = now;
+  if (this.needRefresh()) {
     this.update();
     this.draw();
   }

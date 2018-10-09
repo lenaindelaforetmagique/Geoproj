@@ -1,6 +1,46 @@
 const deg_rad = Math.PI / 180;
 const rad_deg = 180 / Math.PI;
 
+dotProduct = function(vA, vB) {
+  // vA, vB are supposed compatible-vectors, no check is done here.
+  // returns vA . vB
+  let res = 0;
+  for (let i = 0; i < vA.length; i++) {
+    res += vA[i] * vB[i];
+  }
+  return res;
+}
+
+crossProduct = function(vA, vB) {
+  // vA, vB are supposed compatible-vectors, no check is done here.
+  // returns vA x vB
+  let vC = [];
+  vC.push(vA[1] * vB[2] - vA[2] * vB[1]);
+  vC.push(vA[2] * vB[0] - vA[0] * vB[2]);
+  vC.push(vA[0] * vB[1] - vA[1] * vB[0]);
+  return vC;
+}
+
+euclideanNorm = function(vA) {
+  // returns the euclidean norm of a vector
+  let res = 0;
+  for (let i = 0; i < vA.length; i++) {
+    res += vA[i] * vA[i];
+  }
+  return Math.sqrt(res);
+}
+
+geographicalVector = function(lambda, phi) {
+  // return vA as cartesian unit-vector
+  let cphi = Math.cos(phi);
+  let sphi = Math.sin(phi);
+  let clam = Math.cos(lambda);
+  let slam = Math.sin(lambda);
+  return [clam * cphi, slam * cphi, sphi];
+}
+
+
+
 Projection = function(projObj) {
   // ProjectionSurface: none, Cylinder, Cone, Plane
   // Aspect: Normal, Transverse, Oblique
@@ -272,6 +312,8 @@ proj = {
     let clam = Math.cos(lambda);
     let slam = Math.sin(lambda);
 
+    let pt = geographicalVector(lambda, phi);
+
     let cphi0 = Math.cos(phi0);
     let sphi0 = Math.sin(phi0);
     let clam0 = Math.cos(lambda0);
@@ -281,11 +323,9 @@ proj = {
     let v = [-sphi0 * clam0, -sphi0 * slam0, cphi0];
     let w = [-cphi0 * clam0, -cphi0 * slam0, -sphi0];
 
-    let pt = [clam * cphi, slam * cphi, sphi];
-
-    let x_ = u[0] * pt[0] + u[1] * pt[1] + u[2] * pt[2];
-    let y_ = v[0] * pt[0] + v[1] * pt[1] + v[2] * pt[2];
-    let z_ = w[0] * pt[0] + w[1] * pt[1] + w[2] * pt[2];
+    let x_ = dotProduct(u, pt);
+    let y_ = dotProduct(v, pt);
+    let z_ = dotProduct(w, pt);
 
     let r = 90;
     z_ = Math.min(0.9999, z_);
@@ -305,95 +345,51 @@ proj = {
   title: "Azimuthal equidistant",
   prop: "",
   func: function(lambda, phi, lambda0, phi0) {
-
-    var ortho = function(lambda, phi, lambda0, phi0) {
-      lambda *= deg_rad;
-      phi *= deg_rad;
-
-      phi0 *= deg_rad;
-      lambda0 *= deg_rad;
-
-      let slam = Math.sin(lambda - lambda0);
-      let clam = Math.cos(lambda - lambda0);
-      let cphi = Math.cos(phi);
-      let sphi = Math.sin(phi);
-      let cphi0 = Math.cos(phi0);
-      let sphi0 = Math.sin(phi0);
-
-      let x = cphi * slam;
-      let y = (cphi0 * sphi - sphi0 * cphi * clam);
-
-      let cc = sphi0 * sphi + cphi0 * cphi * clam;
-      if (cc < 0) {
-        let n = Math.sqrt(x * x + y * y);
-        x /= n;
-        y /= n;
-      }
-      let r = rad_deg;
-
-      x *= r;
-      y *= -r;
-      return [x, y];
-    };
-
-    var res0 = ortho(lambda0, phi0, lambda0, phi0);
-    var res1 = ortho(lambda, phi, lambda0, phi0);
-    var res = [res1[0] - res0[0], res1[1] - res0[1]];
-
-    lambda -= lambda0
+    let dlambda = lambda - lambda0;
+    while (dlambda < -180) {
+      dlambda += 360;
+    }
+    while (dlambda > 180) {
+      dlambda -= 360;
+    }
     lambda *= deg_rad;
     phi *= deg_rad;
+    lambda0 *= deg_rad;
     phi0 *= deg_rad;
 
-    let rho = Math.sin(phi0) * Math.sin(phi)
-    rho += Math.cos(phi0) * Math.cos(phi) * Math.cos(lambda);
-    rho = Math.acos(rho);
-    // rho = Math.abs(rho);
+    let cphi0 = Math.cos(phi0);
+    let sphi0 = Math.sin(phi0);
+    let clam0 = Math.cos(lambda0);
+    let slam0 = Math.sin(lambda0);
 
-    let theta = Math.cos(phi0) * Math.sin(phi);
-    theta -= Math.sin(phi0) * Math.cos(phi) * Math.cos(lambda);
-    theta = Math.cos(phi) * Math.sin(lambda) / theta;
-    theta = Math.atan(theta);
+    // let u = [-slam0, clam0, 0];
+    let v = [-sphi0 * clam0, -sphi0 * slam0, cphi0];
+    // let w = [-cphi0 * clam0, -cphi0 * slam0, -sphi0];
 
-    if (Number.isNaN(theta)) {
+    let vOP = geographicalVector(lambda, phi);
+    let vON = geographicalVector(lambda0, phi0);
+
+    let rho = Math.acos(dotProduct(vOP, vON));
+
+    let vN = crossProduct(vOP, vON);
+    let vNP = crossProduct(vN, vON);
+    let nNP = euclideanNorm(vNP);
+
+    if (nNP < 0.00001) {
       var x = 0;
       var y = 0;
     } else {
-      // theta = Math.pow(theta, 2);
-      // let sin_theta = Math.sqrt(theta / (1 + theta));
-      // let cos_theta = Math.sqrt(1 / (1 + theta));
-      let sin_theta = Math.sin(theta);
-      let cos_theta = Math.cos(theta);
-
-      var x = -rho * sin_theta;
-      var y = -rho * cos_theta;
+      let ctheta = Math.max(-1, Math.min(dotProduct(vNP, v) / nNP, 1));
+      let theta = Math.acos(ctheta) * Math.sign(dlambda);
+      var x = rho * Math.sin(theta);
+      var y = rho * Math.cos(theta);
+      x *= rad_deg;
+      y *= rad_deg;
     }
-
-    // sign correction with ortho result, ugly but works...
-    if (res[1] > 0) {
-      y *= -1;
-    } else {
-      x *= -1;
-    }
-
-    x *= rad_deg;
-    y *= rad_deg;
-
     return [x, y];
   }
 };
 ListOfProjections.push(new Projection(proj));
-
-
-// let r = 90;
-// let rho = Math.PI / 2 - phi;
-// let theta = lambda;
-// let x = r * rho * Math.sin(theta);
-// let y = r * (rho * Math.cos(theta) - Math.PI / 2);
-// console.log(x, y);
-
-
-// ListOfProjections.push(Postel);
 
 //==============================================================================
 // // ,

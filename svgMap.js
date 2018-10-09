@@ -9,16 +9,16 @@ SVGMap = function(shapes, coord) {
   this.lines = null;
   this.point = null;
 
-  this.update = function() {
+  this.update = function(animated) {
     var thiz = this;
     for (let i = 0; i < thiz.polygons.length; i++) {
-      thiz.polygons[i].update();
+      thiz.polygons[i].update(animated);
     }
     for (let i = 0; i < thiz.lines.length; i++) {
-      thiz.lines[i].update();
+      thiz.lines[i].update(animated);
     }
     if (thiz.point !== null) {
-      thiz.point.update();
+      thiz.point.update(animated);
     }
   }
 

@@ -20,24 +20,29 @@ Point = function(lam, phi) {
   this.dx = 0;
   this.dy = 0;
 
-  this.update = function() {
-    // spring effect
-    let ka = 0.005;
-    let ax = (this.xTar - this.xCur) * ka;
-    let ay = (this.yTar - this.yCur) * ka;
+  this.update = function(animated) {
+    if (animated) {
+      // spring effect
+      let ka = 0.005;
+      let ax = (this.xTar - this.xCur) * ka;
+      let ay = (this.yTar - this.yCur) * ka;
 
-    // integration
-    this.dx += ax;
-    this.dy += ay;
+      // integration
+      this.dx += ax;
+      this.dy += ay;
 
-    // viscosity
-    let kv = 0.9;
-    this.dx *= kv;
-    this.dy *= kv;
+      // viscosity
+      let kv = 0.9;
+      this.dx *= kv;
+      this.dy *= kv;
 
-    // position
-    this.xCur += this.dx;
-    this.yCur += this.dy;
+      // position
+      this.xCur += this.dx;
+      this.yCur += this.dy;
+    } else {
+      this.xCur = this.xTar;
+      this.yCur = this.yTar;
+    }
   }
 
   this.reProject = function(projection) {
@@ -70,10 +75,10 @@ Line = function(pointList, level) {
     }
   }
 
-  this.update = function() {
+  this.update = function(animated) {
     var thiz = this;
     for (let i = 0; i < thiz.points.length; i += 1) {
-      thiz.points[i].update();
+      thiz.points[i].update(animated);
     }
   }
 
@@ -119,10 +124,10 @@ Polygon = function(pointList, level) {
     }
   }
 
-  this.update = function() {
+  this.update = function(animated) {
     var thiz = this;
     for (let i = 0; i < thiz.points.length; i += 1) {
-      thiz.points[i].update();
+      thiz.points[i].update(animated);
     }
   }
 
@@ -152,7 +157,7 @@ Circle = function(coord, color = "yellow") {
   this.init = function(coord_, col) {
     var thiz = this;
     thiz.domObj = document.createElementNS(svgNS, 'circle');
-    thiz.domObj.setAttributeNS(null, "r", "0.05");
+    thiz.domObj.setAttributeNS(null, "r", "0.2");
     thiz.domObj.setAttributeNS(null, "fill", col);
     thiz.domObj.setAttributeNS(null, "stroke", 'black');
     thiz.domObj.setAttributeNS(null, "stroke-width", "0.01");
@@ -160,9 +165,9 @@ Circle = function(coord, color = "yellow") {
     thiz.point = new Point(coord_[0], coord_[1]);
   }
 
-  this.update = function() {
+  this.update = function(animated) {
     var thiz = this;
-    thiz.point.update();
+    thiz.point.update(animated);
   }
 
   this.draw = function() {

@@ -18,8 +18,8 @@ A nice viewer for [Map projections][MapProjwikipedia].
 
 ### Keyboard
 - left/right arrow to change projection.
-- q/d : change longitude center of projection.
-- s/z : change latitude center of projection.
+- s/f : change longitude center of projection.
+- d/e : change latitude center of projection.
 
 ### Touch
 - two-fingers-move : like any photo viewer : slide + zoom.
@@ -30,8 +30,8 @@ A nice viewer for [Map projections][MapProjwikipedia].
 
 ### Query string
 Query argument may be added to URL after '?':
-- res=x : x in {12, 25, 50, 100} to specify the resolution.
 - file=fileName.json : a "well" formated geojson file.
+- animated=true/false : specifies animation.
 
 
 ## List of computed projections
