@@ -7,14 +7,6 @@ html, body {
   /* overflow: hidden; */
 }
 
-p {
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-  /* font-family: "Courier New"; */
-  font-size: 10px;
-}
-
 svg {
   margin: 0;
   padding: 0;
@@ -28,8 +20,8 @@ svg, legend {
   width: 100%;
 }
 
-text {
-  /* font-family: "Courier New"; */
+.button {
+  cursor: pointer;
 }
 
 #container {
@@ -38,9 +30,4 @@ text {
   background: #EEEEEE;
   height: 100%;
   overflow: hidden;
-}
-
-textarea {
-  height: 100%;
-  width: 100%;
 }

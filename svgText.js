@@ -5,6 +5,7 @@ SVGText = function() {
   this.text = null;
   this.title = null;
   this.description = null;
+  this.animationBtn = null;
 
   this.controlText = null;
 
@@ -12,6 +13,10 @@ SVGText = function() {
   this.controlOn = [];
 
   this.ctrl = true;
+
+  this.setAnimationBtn = function(animated) {
+    this.animationBtn.textContent = animated ? "Animation: ON" : "Animation: OFF";
+  }
 
   this.setProj = function(projection) {
     var thiz = this;
@@ -49,10 +54,19 @@ SVGText.prototype.init = function() {
   thiz.description.setAttributeNS(null, "x", 0);
   thiz.description.setAttributeNS(null, "dy", 20);
 
+  thiz.animationBtn = document.createElementNS(svgNS, "text");
+  thiz.animationBtn.setAttributeNS(null, "fill", "rgba(0,0,0,0.7)");
+  thiz.domObj.appendChild(thiz.animationBtn);
+  thiz.animationBtn.setAttributeNS(null, "class", "button");
+  thiz.animationBtn.setAttributeNS(null, "font-size", "12px");
+  thiz.animationBtn.setAttributeNS(null, "x", 0);
+  thiz.animationBtn.setAttributeNS(null, "y", 70);
+
   thiz.controlText = document.createElementNS(svgNS, "text");
+  thiz.controlText.setAttributeNS(null, "class", "button");
   thiz.domObj.appendChild(thiz.controlText);
   thiz.controlText.setAttributeNS(null, "x", 0);
-  thiz.controlText.setAttributeNS(null, "y", 60);
+  thiz.controlText.setAttributeNS(null, "y", 80);
   thiz.controlText.setAttributeNS(null, "fill", "rgba(0,0,0,0.7)");
   thiz.controlText.setAttributeNS(null, "font-size", "12px");
 
@@ -68,16 +82,18 @@ SVGText.prototype.init = function() {
     " # Mouse",
     " - click & move : slide the view.",
     " - wheel : zoom in/out.",
-    " - SHIFT + click & move : change center of projection.",
+    " - SHIFT + click & move : change center.",
     " # Keyboard",
     " - left/right arrow to change projection.",
-    " - s/f : change longitude center of projection.",
-    " - d/e : change latitude center of projection.",
+    " - s/f : change longitude-center.",
+    " - d/e : change latitude-center.",
     " # Touch",
     " - two-fingers-move : slide + zoom.",
-    " - one-finger-move : change center of projection.",
-    " - touch in left-quarter of the screen : previous projection.",
-    " - touch in right-quarter of the screen : next projection."
+    " - one-finger-move : change center.",
+    " - left-touch : previous projection.",
+    " - right-touch : next projection.",
+    " # Query arguments",
+    " - ?file=fileName.json : specific GeoJSON file."
   ];
 
   for (let i = 0; i < lines.length; i++) {
@@ -87,10 +103,10 @@ SVGText.prototype.init = function() {
     line.textContent = lines[i];
     thiz.controlOff.push(line);
   }
-  thiz.changeText();
+  thiz.toggleControl();
 }
 
-SVGText.prototype.changeText = function() {
+SVGText.prototype.toggleControl = function() {
   var thiz = this;
   removeDOMChildren(thiz.controlText);
   if (thiz.ctrl) {

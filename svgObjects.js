@@ -42,6 +42,8 @@ Point = function(lam, phi) {
     } else {
       this.xCur = this.xTar;
       this.yCur = this.yTar;
+      this.dx = 0;
+      this.dy = 0;
     }
   }
 

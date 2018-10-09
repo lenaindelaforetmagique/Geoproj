@@ -7,6 +7,11 @@ removeDOMChildren = function(dom) {
   };
 };
 
+isTouched = function(dom, x, y) {
+  let box = dom.getBoundingClientRect();
+  return (box.x <= x && x <= box.x + box.width) && (box.y <= y && y <= box.y + box.height);
+}
+
 
 HTMLView = function(sourceShapes, coord = [0, 0], animated = true) {
   this.container = document.getElementById("container");
@@ -39,6 +44,7 @@ HTMLView.prototype.init = function(sourceShapes, coord) {
 
   thiz.svgText = new SVGText();
   thiz.container.appendChild(thiz.svgText.domObj);
+  thiz.svgText.setAnimationBtn(thiz.animated);
 }
 
 HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
@@ -67,6 +73,12 @@ HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
   thiz.svgMap.reProject(thiz.projection)
 
   thiz.hasChanged = true;
+}
+
+HTMLView.prototype.toggleAnimated = function() {
+  var thiz = this;
+  thiz.animated = !thiz.animated;
+  thiz.svgText.setAnimationBtn(thiz.animated);
 }
 
 HTMLView.prototype.update = function() {
@@ -114,11 +126,16 @@ HTMLView.prototype.setupInput = function() {
   }
 
   thiz.svgText.controlText.onclick = function(e) {
-    thiz.svgText.changeText();
+    thiz.svgText.toggleControl();
+  }
+
+  thiz.svgText.animationBtn.onclick = function(e) {
+    thiz.toggleAnimated();
   }
 
   thiz.touchInput();
 }
+
 
 HTMLView.prototype.touchInput = function() {
   var thiz = this;
@@ -205,11 +222,15 @@ HTMLView.prototype.touchInput = function() {
 
   this.input.handle_touchend = function(e) {
     if (!thiz.input.hasMoved) {
-      if (thiz.input.prevPos.y < 80) {
-        thiz.svgText.changeText();
-      } else if (thiz.input.prevPos.x < window.innerWidth / 4) {
+      let x = thiz.input.prevPos.x;
+      let y = thiz.input.prevPos.y;
+      if (isTouched(thiz.svgText.animationBtn, x, y)) {
+        thiz.toggleAnimated();
+      } else if (isTouched(thiz.svgText.controlText, x, y)) {
+        thiz.svgText.toggleControl();
+      } else if (x < window.innerWidth / 4) {
         thiz.changeProj(-1);
-      } else if (thiz.input.prevPos.x > window.innerWidth * 3 / 4) {
+      } else if (x > window.innerWidth * 3 / 4) {
         thiz.changeProj(1);
       }
     }
