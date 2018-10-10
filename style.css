@@ -2,22 +2,39 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Ubuntu Mono', monospace;
-  /* width: 100%; */
-  /* overflow: hidden; */
+}
+
+#container {
+  margin: 0;
+  padding: 0;
+  background: #EEEEEE;
+  height: 100%;
+  overflow: hidden;
 }
 
 svg {
   margin: 0;
   padding: 0;
-}
-
-svg, legend {
   position: absolute;
   left: 0px;
   top: 0px;
   height: 100%;
   width: 100%;
+}
+
+text {
+  x: 10px;
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  fill: rgba(0, 0, 0, 0.7);
+}
+
+text.title {
+  font-size: 30px;
+}
+
+text.button {
+  cursor: pointer;
 }
 
 polyline.lev0 {
@@ -40,22 +57,9 @@ polygon.lev0 {
 
 polygon.lev1 {
   fill: rgba(173, 216, 230, 1);
-  stroke: black;
   stroke-width: 0;
 }
 
 /* polygon.lev0:hover {
   fill: rgba(255, 0, 0, 0.5);
 } */
-
-.button {
-  cursor: pointer;
-}
-
-#container {
-  margin: 0;
-  padding: 0;
-  background: #EEEEEE;
-  height: 100%;
-  overflow: hidden;
-}
