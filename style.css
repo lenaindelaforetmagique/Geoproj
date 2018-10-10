@@ -20,6 +20,34 @@ svg, legend {
   width: 100%;
 }
 
+polyline.lev0 {
+  fill: none;
+  stroke: #999999;
+  stroke-width: 0.1;
+}
+
+polyline.lev1 {
+  fill: none;
+  stroke: #FF0000;
+  stroke-width: 0.2;
+}
+
+polygon.lev0 {
+  fill: rgba(0, 0, 0, 0.6);
+  stroke: black;
+  stroke-width: 0.01;
+}
+
+polygon.lev1 {
+  fill: rgba(173, 216, 230, 1);
+  stroke: black;
+  stroke-width: 0;
+}
+
+/* polygon.lev0:hover {
+  fill: rgba(255, 0, 0, 0.5);
+} */
+
 .button {
   cursor: pointer;
 }

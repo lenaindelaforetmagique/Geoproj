@@ -63,12 +63,7 @@ Line = function(pointList, level) {
   this.init = function(pointList_) {
     var thiz = this;
     thiz.domObj = document.createElementNS(svgNS, 'polyline');
-    let color = thiz.level == 0 ? '#999999' : "#FF0000";
-    let strokeW = thiz.level == 0 ? '0.1' : "0.2";
-
-    thiz.domObj.setAttributeNS(null, "fill", "none");
-    thiz.domObj.setAttributeNS(null, "stroke", color);
-    thiz.domObj.setAttributeNS(null, "stroke-width", strokeW);
+    thiz.domObj.setAttributeNS(null, "class", "lev" + level);
 
     // Load points
     thiz.points = [];
@@ -112,12 +107,7 @@ Polygon = function(pointList, level) {
   this.init = function(pointList_) {
     var thiz = this;
     thiz.domObj = document.createElementNS(svgNS, 'polygon');
-    let col = thiz.level == 0 ? 'rgba(0,0,0,0.6)' : 'rgba(173,216,230,1)';
-    thiz.domObj.setAttributeNS(null, "style", "fill:" + col);
-    thiz.domObj.setAttributeNS(null, "stroke", 'black');
-
-    let sw = thiz.level == 0 ? '0.01' : '0';
-    thiz.domObj.setAttributeNS(null, "stroke-width", sw);
+    thiz.domObj.setAttributeNS(null, "class", "lev" + level);
 
     // Load points
     thiz.points = [];
