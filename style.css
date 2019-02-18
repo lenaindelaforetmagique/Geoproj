@@ -47,7 +47,6 @@ polygon.lev1 {
 /* polygon.lev0:hover {
   fill: rgba(255, 0, 0, 0.5);
 } */
-
 .button {
   cursor: pointer;
 }
@@ -58,4 +57,32 @@ polygon.lev1 {
   background: #EEEEEE;
   height: 100%;
   overflow: hidden;
+}
+
+footer {
+  position: absolute;
+  top: 95%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+a:visited {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+a:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+a:active {
+  color: rgba(0, 0, 0, 0.7);
 }
