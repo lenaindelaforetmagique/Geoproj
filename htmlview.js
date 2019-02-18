@@ -1,4 +1,27 @@
-// global variables
+// MIT License
+//
+// Copyright (c) 2018 Xavier Morin
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+// HTML view + events + update
+
 
 removeDOMChildren = function(dom) {
   //removes all children of dom
@@ -8,6 +31,7 @@ removeDOMChildren = function(dom) {
 };
 
 isTouched = function(dom, x, y) {
+  // returns true/false if dom is under (x,y)
   let box = dom.getBoundingClientRect();
   return (box.x <= x && x <= box.x + box.width) && (box.y <= y && y <= box.y + box.height);
 }
@@ -45,6 +69,9 @@ HTMLView.prototype.init = function(sourceShapes, coord) {
   thiz.svgText = new SVGText();
   thiz.container.appendChild(thiz.svgText.domObj);
   thiz.svgText.setAnimationBtn(thiz.animated);
+
+  this.lambda0 = coord[0];
+  this.phi0 = coord[1];
 }
 
 HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
