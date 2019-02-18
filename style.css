@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 #container {
@@ -24,7 +25,6 @@ svg {
 
 text {
   x: 10px;
-  font-family: 'Ubuntu Mono', monospace;
   font-size: 12px;
   fill: rgba(0, 0, 0, 0.7);
 }
@@ -103,6 +103,8 @@ a:hover {
 a:active {
   color: rgba(0, 0, 0, 0.7);
 }
+
 =======
-} */
->>>>>>> 4c1a68c6f5f493d517a68abf0fd46e85569ab307
+}
+
+*/>>>>>>>4c1a68c6f5f493d517a68abf0fd46e85569ab307
