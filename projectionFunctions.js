@@ -117,7 +117,7 @@ let proj;
 //==============================================================================
 proj = {
   title: "Orthographic",
-  prop: "jolie",
+  prop: "",
   func: function(lambda, phi, lambda0, phi0) {
     lambda *= deg_rad;
     phi *= deg_rad;
@@ -154,7 +154,7 @@ ListOfProjections.push(new Projection(proj));
 //==============================================================================
 proj = {
   title: "Equirectangular",
-  prop: "belle",
+  prop: "",
   func: function(lambda, phi, lambda0, phi0) {
     let x = lambda;
     let y = -phi;
@@ -415,6 +415,69 @@ proj = {
   }
 };
 ListOfProjections.push(new Projection(proj));
+
+//==============================================================================
+proj = {
+  title: "Lambert conformal conic",
+  prop: "",
+  func: function(lambda, phi, lambda0, phi0) {
+    let dphi = 0;
+
+    phi0 = Math.max(-89 + dphi, Math.min(phi0, 89 - dphi));
+
+    phi = Math.min(89, Math.max(-89, phi));
+    phi = Math.min(phi0 + 90, Math.max(phi0 - 90, phi));
+
+
+    let phi1 = phi0 - dphi;
+    let phi2 = phi0 + dphi;
+
+
+    lambda *= deg_rad;
+    phi *= deg_rad;
+    lambda0 *= deg_rad;
+    phi0 *= deg_rad;
+
+    phi1 *= deg_rad;
+    phi2 *= deg_rad;
+
+    let n_;
+    if (dphi == 0) {
+      n_ = Math.sin(phi1);
+    } else {
+      n_ = Math.tan(Math.PI / 4 + phi1 / 2);
+      n_ = 1 / n_;
+      n_ *= Math.tan(Math.PI / 4 + phi2 / 2);
+      n_ = Math.log(n_);
+      n_ = 1 / n_;
+      n_ *= Math.log(Math.cos(phi1) / Math.cos(phi2));
+    }
+
+    let f_ = Math.pow(Math.tan(Math.PI / 4 + phi1 / 2), n_);
+    f_ *= (Math.cos(phi1) / n_);
+
+    let rho = Math.tan(Math.PI / 4 + phi / 2);
+    rho = 1 / rho;
+    rho = f_ * Math.pow(rho, n_);
+
+    let rho0 = Math.tan(Math.PI / 4 + phi0 / 2);
+    rho0 = 1 / rho0;
+    rho0 = f_ * Math.pow(rho0, n_);
+
+    let x = rho * Math.sin(n_ * (lambda - lambda0));
+    let y = rho0 - rho * Math.cos(n_ * (lambda - lambda0));
+
+    x *= rad_deg;
+    y *= rad_deg;
+
+    // if (isNaN(x) || isNaN(y)) {
+    //   console.log(lambda, phi, lambda0, phi0);
+    // }
+    return [x, -y];
+  }
+};
+ListOfProjections.push(new Projection(proj));
+
 
 //==============================================================================
 // // ,

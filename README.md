@@ -50,6 +50,7 @@ The list of map projections computed here:
 - Winkel-Tripel
 - Stereographic
 - Azimuthal equidistant
+- Lambert conformal conic
 
 
 <!-- ## Coastlines
