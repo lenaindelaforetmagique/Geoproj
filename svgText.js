@@ -40,8 +40,9 @@ SVGText = function() {
     this.animationBtn.textContent = animated ? "Animation: ON" : "Animation: OFF";
   }
 
+  var thiz = this;
+
   this.setProj = function(projection) {
-    var thiz = this;
     thiz.title.textContent = projection.title;
     thiz.description.textContent = projection.description();
   }
@@ -54,39 +55,37 @@ SVGText = function() {
 }
 
 SVGText.prototype.init = function() {
-  var thiz = this;
+  this.domObj = document.createElementNS(svgNS, "svg");
 
-  thiz.domObj = document.createElementNS(svgNS, "svg");
+  this.title = document.createElementNS(svgNS, "text");
+  this.title.setAttributeNS(null, "class", "title");
+  this.title.setAttributeNS(null, "x", 2);
+  this.title.setAttributeNS(null, "y", 30);
+  this.domObj.appendChild(this.title);
 
-  thiz.title = document.createElementNS(svgNS, "text");
-  thiz.title.setAttributeNS(null, "class", "title");
-  thiz.title.setAttributeNS(null, "x", 2);
-  thiz.title.setAttributeNS(null, "y", 30);
-  thiz.domObj.appendChild(thiz.title);
+  this.description = document.createElementNS(svgNS, "text");
+  this.description.setAttributeNS(null, "x", 2);
+  this.description.setAttributeNS(null, "y", 50);
+  this.domObj.appendChild(this.description);
 
-  thiz.description = document.createElementNS(svgNS, "text");
-  thiz.description.setAttributeNS(null, "x", 2);
-  thiz.description.setAttributeNS(null, "y", 50);
-  thiz.domObj.appendChild(thiz.description);
+  this.animationBtn = document.createElementNS(svgNS, "text");
+  this.animationBtn.setAttributeNS(null, "class", "button");
+  this.animationBtn.setAttributeNS(null, "x", 2);
+  this.animationBtn.setAttributeNS(null, "y", 70);
+  this.domObj.appendChild(this.animationBtn);
 
-  thiz.animationBtn = document.createElementNS(svgNS, "text");
-  thiz.animationBtn.setAttributeNS(null, "class", "button");
-  thiz.animationBtn.setAttributeNS(null, "x", 2);
-  thiz.animationBtn.setAttributeNS(null, "y", 70);
-  thiz.domObj.appendChild(thiz.animationBtn);
-
-  thiz.controlText = document.createElementNS(svgNS, "text");
-  thiz.controlText.setAttributeNS(null, "class", "button");
-  thiz.controlText.setAttributeNS(null, "x", 2);
-  thiz.controlText.setAttributeNS(null, "y", 78);
-  thiz.domObj.appendChild(thiz.controlText);
+  this.controlText = document.createElementNS(svgNS, "text");
+  this.controlText.setAttributeNS(null, "class", "button");
+  this.controlText.setAttributeNS(null, "x", 2);
+  this.controlText.setAttributeNS(null, "y", 78);
+  this.domObj.appendChild(this.controlText);
 
   let line;
   line = document.createElementNS(svgNS, "tspan");
   line.setAttributeNS(null, "x", 2);
   line.setAttributeNS(null, "dy", 12);
   line.textContent = "CONTROLS >";
-  thiz.controlOn.push(line);
+  this.controlOn.push(line);
 
   let lines = [
     "CONTROLS v",
@@ -112,22 +111,21 @@ SVGText.prototype.init = function() {
     line.setAttributeNS(null, "x", 2);
     line.setAttributeNS(null, "dy", 12);
     line.textContent = lines[i];
-    thiz.controlOff.push(line);
+    this.controlOff.push(line);
   }
-  thiz.toggleControl();
+  this.toggleControl();
 }
 
 SVGText.prototype.toggleControl = function() {
-  var thiz = this;
-  removeDOMChildren(thiz.controlText);
-  if (thiz.ctrl) {
-    for (i = 0; i < thiz.controlOn.length; i++) {
-      thiz.controlText.appendChild(thiz.controlOn[i]);
+  removeDOMChildren(this.controlText);
+  if (this.ctrl) {
+    for (i = 0; i < this.controlOn.length; i++) {
+      this.controlText.appendChild(this.controlOn[i]);
     }
   } else {
-    for (i = 0; i < thiz.controlOff.length; i++) {
-      thiz.controlText.appendChild(thiz.controlOff[i]);
+    for (i = 0; i < this.controlOff.length; i++) {
+      this.controlText.appendChild(this.controlOff[i]);
     }
   }
-  thiz.ctrl = !thiz.ctrl;
+  this.ctrl = !this.ctrl;
 }

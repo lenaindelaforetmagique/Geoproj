@@ -33,8 +33,9 @@ SVGMap = function(shapes, coord) {
   this.lines = null;
   this.point = null;
 
+  var thiz = this;
+
   this.update = function(animated) {
-    var thiz = this;
     for (let i = 0; i < thiz.polygons.length; i++) {
       thiz.polygons[i].update(animated);
     }
@@ -47,8 +48,7 @@ SVGMap = function(shapes, coord) {
   }
 
   this.draw = function() {
-    var thiz = this;
-    // thiz.viewBox.draw();
+    // this.viewBox.draw();
     for (let i = 0; i < thiz.polygons.length; i++) {
       thiz.polygons[i].draw();
     }
@@ -61,7 +61,6 @@ SVGMap = function(shapes, coord) {
   }
 
   this.reProject = function(projection) {
-    var thiz = this;
     for (let i = 0; i < thiz.polygons.length; i++) {
       thiz.polygons[i].reProject(projection);
     }
@@ -77,13 +76,11 @@ SVGMap = function(shapes, coord) {
 }
 
 SVGMap.prototype.init = function(sourceShapes, coord) {
-  var thiz = this;
-
-  thiz.domObj = document.createElementNS(svgNS, "svg");
-  thiz.viewBox = new ViewBox(thiz.domObj);
+  this.domObj = document.createElementNS(svgNS, "svg");
+  this.viewBox = new ViewBox(this.domObj);
 
   // Create Polygons
-  thiz.polygons = [];
+  this.polygons = [];
   // Water background
   let dlon = 10;
   let dlat = 5;
@@ -96,8 +93,8 @@ SVGMap.prototype.init = function(sourceShapes, coord) {
       pointsList.push([lon, lat + dlat]);
       pointsList.push([lon, lat]);
       let waterBG = new Polygon(pointsList, 1);
-      thiz.polygons.push(waterBG);
-      thiz.domObj.appendChild(waterBG.domObj);
+      this.polygons.push(waterBG);
+      this.domObj.appendChild(waterBG.domObj);
     }
   }
   //
@@ -124,14 +121,14 @@ SVGMap.prototype.init = function(sourceShapes, coord) {
     for (let j = 0; j < sourceShapes[i].length; j++) {
       // Polygon level
       let polygon = new Polygon(sourceShapes[i][j], j);
-      thiz.polygons.push(polygon);
-      thiz.domObj.appendChild(polygon.domObj);
+      this.polygons.push(polygon);
+      this.domObj.appendChild(polygon.domObj);
     }
   }
 
 
   // Create lines
-  thiz.lines = [];
+  this.lines = [];
   // parallels
   for (let lat = -90; lat <= 90; lat += 10) {
     pointsList = [];
@@ -139,8 +136,8 @@ SVGMap.prototype.init = function(sourceShapes, coord) {
       pointsList.push([lon, lat]);
     }
     let line = new Line(pointsList, lat == 0 ? 1 : 0); // equator case
-    thiz.lines.push(line);
-    thiz.domObj.appendChild(line.domObj);
+    this.lines.push(line);
+    this.domObj.appendChild(line.domObj);
   }
 
   // meridians
@@ -150,18 +147,18 @@ SVGMap.prototype.init = function(sourceShapes, coord) {
       pointsList.push([lon, lat]);
     }
     let line = new Line(pointsList, lon == 0 ? 1 : 0); // greenwich case
-    thiz.lines.push(line);
-    thiz.domObj.appendChild(line.domObj);
+    this.lines.push(line);
+    this.domObj.appendChild(line.domObj);
   }
 
   // Origin
   let point = new Circle([0, 0], "gray");
-  thiz.domObj.appendChild(point.domObj);
+  this.domObj.appendChild(point.domObj);
 
   // point
   if (coord !== null) {
-    thiz.point = new Circle(coord);
-    thiz.domObj.appendChild(thiz.point.domObj)
+    this.point = new Circle(coord);
+    this.domObj.appendChild(this.point.domObj)
   }
 }
 
@@ -169,8 +166,9 @@ ViewBox = function(parentSvg) {
   this.parentSvg = parentSvg;
   this.box = [];
 
+  var thiz = this;
+
   this.init = function() {
-    var thiz = this;
     if (window.innerHeight > window.innerWidth) {
       var w = 1.5 * 360 / Math.PI;
       var h = w * window.innerHeight / window.innerWidth;
@@ -180,17 +178,15 @@ ViewBox = function(parentSvg) {
       var w = h * window.innerWidth / window.innerHeight;
 
     }
-    this.box = [-w / 2, -h / 2, w, h];
-    this.draw();
+    thiz.box = [-w / 2, -h / 2, w, h];
+    thiz.draw();
   }
 
   this.draw = function() {
-    var thiz = this;
     thiz.parentSvg.setAttributeNS(null, "viewBox", thiz.box.join(" "));
   }
 
   this.scale = function(x, y, fact = 1) {
-    var thiz = this;
     let domRect = thiz.parentSvg.getBoundingClientRect();
     let coorX = (x - domRect.left) / domRect.width * thiz.box[2] + thiz.box[0];
     let coorY = (y - domRect.top) / domRect.height * thiz.box[3] + thiz.box[1];
@@ -203,7 +199,6 @@ ViewBox = function(parentSvg) {
   }
 
   this.translate = function(dx, dy) {
-    var thiz = this;
     let domRect = thiz.parentSvg.getBoundingClientRect();
     thiz.box[0] += dx / domRect.width * thiz.box[2];
     thiz.box[1] += dy / domRect.height * thiz.box[3];
@@ -211,7 +206,6 @@ ViewBox = function(parentSvg) {
   }
 
   this.resize = function() {
-    var thiz = this;
     thiz.box[3] = thiz.box[2] * window.innerHeight / window.innerWidth;
     thiz.draw();
   }

@@ -96,22 +96,19 @@ Input = function(dom) {
 };
 
 Input.prototype.loadMouse = function(e) {
-  var thiz = this;
-  thiz.getMousePos(e);
-  thiz.msg = `${e.type} {x: ${thiz.curPos.x}, y: ${thiz.curPos.y}}`;
+  this.getMousePos(e);
+  this.msg = `${e.type} {x: ${this.curPos.x}, y: ${this.curPos.y}}`;
 };
 
 Input.prototype.loadTouch = function(e) {
-  var thiz = this;
-  thiz.getTouchPos(e);
-  thiz.getTouchSize(e);
-  thiz.msg = `${e.type} {x: ${thiz.curPos.x}, y: ${thiz.curPos.y}, l:${thiz.curSize}}`;
+  this.getTouchPos(e);
+  this.getTouchSize(e);
+  this.msg = `${e.type} {x: ${this.curPos.x}, y: ${this.curPos.y}, l:${this.curSize}}`;
 };
 
 
 Input.prototype.getMousePos = function(e) {
-  var thiz = this;
-  thiz.curPos = {
+  this.curPos = {
     x: e.clientX,
     y: e.clientY
   };
@@ -125,26 +122,22 @@ Input.prototype.getTouchPos = function(e) {
     x += e.touches[i].clientX / n;
     y += e.touches[i].clientY / n;
   }
-  var thiz = this;
-  thiz.curPos = {
+  this.curPos = {
     x: x,
     y: y
   };
 };
 
 Input.prototype.savePos = function() {
-  var thiz = this;
-  thiz.prevPos = thiz.curPos;
+  this.prevPos = this.curPos;
 };
 
 Input.prototype.resetPos = function() {
-  var thiz = this;
-  thiz.prevPos = null;
+  this.prevPos = null;
 };
 
 
 Input.prototype.getTouchSize = function(e) {
-  var thiz = this;
   let lMax = 0;
   let n = e.touches.length;
   for (let i = 0; i < n; i++) {
@@ -154,16 +147,14 @@ Input.prototype.getTouchSize = function(e) {
       lMax = Math.max(lMax, l);
     }
   }
-  thiz.curSize = Math.pow(lMax, 0.5);
+  this.curSize = Math.pow(lMax, 0.5);
 };
 
 
 Input.prototype.saveTouchSize = function() {
-  var thiz = this;
-  thiz.prevSize = thiz.curSize;
+  this.prevSize = this.curSize;
 };
 
 Input.prototype.resetTouchSize = function() {
-  var thiz = this;
-  thiz.prevSize = null;
+  this.prevSize = null;
 };

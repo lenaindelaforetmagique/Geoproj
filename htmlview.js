@@ -62,60 +62,54 @@ HTMLView = function(sourceShapes, coord = [0, 0], animated = true) {
 
 
 HTMLView.prototype.init = function(sourceShapes, coord) {
-  var thiz = this;
-  thiz.svgMap = new SVGMap(sourceShapes, coord);
-  thiz.container.appendChild(thiz.svgMap.domObj);
+  this.svgMap = new SVGMap(sourceShapes, coord);
+  this.container.appendChild(this.svgMap.domObj);
 
-  thiz.svgText = new SVGText();
-  thiz.container.appendChild(thiz.svgText.domObj);
-  thiz.svgText.setAnimationBtn(thiz.animated);
+  this.svgText = new SVGText();
+  this.container.appendChild(this.svgText.domObj);
+  this.svgText.setAnimationBtn(this.animated);
 
   this.lambda0 = coord[0];
   this.phi0 = coord[1];
 }
 
 HTMLView.prototype.changeProj = function(incr = 0, dlambda = 0, dphi = 0) {
-  var thiz = this;
-
-  thiz.iProjection += incr;
-  while (thiz.iProjection < 0) {
-    thiz.iProjection += ListOfProjections.length;
+  this.iProjection += incr;
+  while (this.iProjection < 0) {
+    this.iProjection += ListOfProjections.length;
   }
-  thiz.iProjection %= ListOfProjections.length;
-  thiz.projection = ListOfProjections[thiz.iProjection];
+  this.iProjection %= ListOfProjections.length;
+  this.projection = ListOfProjections[this.iProjection];
 
-  thiz.phi0 = Math.max(-90, Math.min(90, thiz.phi0 + dphi));
-  thiz.lambda0 += dlambda;
-  while (thiz.lambda0 < -180) {
-    thiz.lambda0 += 360;
-    thiz.lambda0 = Math.floor(thiz.lambda0 / 10) * 10;
+  this.phi0 = Math.max(-90, Math.min(90, this.phi0 + dphi));
+  this.lambda0 += dlambda;
+  while (this.lambda0 < -180) {
+    this.lambda0 += 360;
+    this.lambda0 = Math.floor(this.lambda0 / 10) * 10;
   }
-  while (thiz.lambda0 > 180) {
-    thiz.lambda0 -= 360;
-    thiz.lambda0 = Math.floor(thiz.lambda0 / 10) * 10;
+  while (this.lambda0 > 180) {
+    this.lambda0 -= 360;
+    this.lambda0 = Math.floor(this.lambda0 / 10) * 10;
   }
 
-  thiz.projection.setProj(thiz.lambda0, thiz.phi0);
-  thiz.svgText.setProj(thiz.projection);
-  thiz.svgMap.reProject(thiz.projection)
+  this.projection.setProj(this.lambda0, this.phi0);
+  this.svgText.setProj(this.projection);
+  this.svgMap.reProject(this.projection)
 
-  thiz.hasChanged = true;
+  this.hasChanged = true;
 }
 
 HTMLView.prototype.toggleAnimated = function() {
-  var thiz = this;
-  thiz.animated = !thiz.animated;
-  thiz.svgText.setAnimationBtn(thiz.animated);
+  this.animated = !this.animated;
+  this.svgText.setAnimationBtn(this.animated);
 }
 
 HTMLView.prototype.update = function() {
-  var thiz = this;
-  thiz.svgMap.update(thiz.animated);
+  this.svgMap.update(this.animated);
 }
 
 HTMLView.prototype.draw = function() {
-  var thiz = this;
-  thiz.svgMap.draw();
+  this.svgMap.draw();
 }
 
 HTMLView.prototype.setupInput = function() {
@@ -152,21 +146,21 @@ HTMLView.prototype.setupInput = function() {
     thiz.svgText.resize();
   }
 
-  thiz.svgText.controlText.onclick = function(e) {
+  this.svgText.controlText.onclick = function(e) {
     thiz.svgText.toggleControl();
   }
 
-  thiz.svgText.animationBtn.onclick = function(e) {
+  this.svgText.animationBtn.onclick = function(e) {
     thiz.toggleAnimated();
   }
 
-  thiz.touchInput();
+  this.touchInput();
 }
 
 
 HTMLView.prototype.touchInput = function() {
   var thiz = this;
-  var dom = thiz.container;
+  var dom = this.container;
 
   this.input = new Input(dom);
 
