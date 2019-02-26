@@ -55,6 +55,17 @@ euclideanNorm = function(vA) {
   return Math.sqrt(res);
 }
 
+limitNorm = function(vA, normLimit) {
+  let norm = euclideanNorm(vA);
+  let k = normLimit / norm;
+
+  if (k <= 1) {
+    return [vA[0] * k, vA[1] * k];
+  } else {
+    return vA;
+  }
+}
+
 geographicalVector = function(lambda, phi) {
   // return vA as cartesian unit-vector
   let cphi = Math.cos(phi);
@@ -353,11 +364,10 @@ proj = {
     let z_ = dotProduct(w, pt);
 
     let r = 90;
-    z_ = Math.min(0.9999, z_);
     let x = r * x_ / (1 - z_);
     let y = -r * y_ / (1 - z_);
 
-    return [x, y];
+    return limitNorm([x, y], 250);
   }
 };
 ListOfProjections.push(new Projection(proj));
@@ -395,6 +405,7 @@ proj = {
     let vON = geographicalVector(lambda0, phi0);
 
     let rho = Math.acos(dotProduct(vOP, vON));
+    rho = Math.min(rho, Math.PI * 0.8);
 
     let vN = crossProduct(vOP, vON);
     let vNP = crossProduct(vN, vON);
@@ -422,11 +433,11 @@ proj = {
   prop: "",
   func: function(lambda, phi, lambda0, phi0) {
     let dphi = 0;
-
+    let dphi2 = 90;
     phi0 = Math.max(-89 + dphi, Math.min(phi0, 89 - dphi));
 
     phi = Math.min(89, Math.max(-89, phi));
-    phi = Math.min(phi0 + 90, Math.max(phi0 - 90, phi));
+    phi = Math.min(phi0 + dphi2, Math.max(phi0 - dphi2, phi));
 
 
     let phi1 = phi0 - dphi;

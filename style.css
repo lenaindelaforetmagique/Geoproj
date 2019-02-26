@@ -60,10 +60,6 @@ polygon.lev1 {
   stroke-width: 0;
 }
 
-/* polygon.lev0:hover {
-  fill: rgba(255, 0, 0, 0.5);
-<<<<<<< HEAD
-} */
 .button {
   cursor: pointer;
 }
@@ -77,11 +73,10 @@ polygon.lev1 {
 }
 
 footer {
+  text-align: center;
+  width: 100%;
   position: absolute;
-  top: 95%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  bottom: 0px;
   font-size: 12px;
 }
 
@@ -104,8 +99,3 @@ a:hover {
 a:active {
   color: rgba(0, 0, 0, 0.7);
 }
-
-=======
-}
-
-*/>>>>>>>4c1a68c6f5f493d517a68abf0fd46e85569ab307
