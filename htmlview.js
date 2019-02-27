@@ -37,7 +37,7 @@ isTouched = function(dom, x, y) {
 }
 
 
-HTMLView = function(sourceShapes, coord = [0, 0], animated = true) {
+HTMLView = function(sourceShapes, coord = [0, 0], animated = true, numProj = 0) {
   this.container = document.getElementById("container");
   this.animated = animated;
   this.hasChanged = false;
@@ -56,7 +56,7 @@ HTMLView = function(sourceShapes, coord = [0, 0], animated = true) {
 
   this.init(sourceShapes, coord);
   this.setupInput();
-  this.changeProj();
+  this.changeProj(numProj);
   this.setupUpdate();
 }
 

@@ -42,8 +42,14 @@ if (!requestURL) {
 let animated = getQueryVariable("animated");
 animated = (!animated || animated !== "false")
 
-console.log(requestURL, animated);
+let projnum = getQueryVariable("p");
+if (!projnum) {
+  projnum = 0;
+} else {
+  projnum = parseInt(projnum);
+}
 
+console.log(requestURL, animated, projnum);
 
 
 // reading of .JSON file
@@ -59,11 +65,11 @@ request.onload = function() {
 
   function success(pos) {
     var crd = pos.coords;
-    var run = new HTMLView(multiPolygons, [crd.longitude, crd.latitude], animated);
+    var run = new HTMLView(multiPolygons, [crd.longitude, crd.latitude], animated, projnum);
   }
 
   function error(err) {
-    var run = new HTMLView(multiPolygons, [0, 0], animated);
+    var run = new HTMLView(multiPolygons, [0, 0], animated, projnum);
   }
 
   navigator.geolocation.getCurrentPosition(success, error);

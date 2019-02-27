@@ -32,6 +32,7 @@ A nice viewer for [Map projections][MapProjwikipedia].
 Query argument may be added to URL after '?':
 - file=fileName.json : a "well" formated geojson file.
 - animated=true/false : specifies animation.
+- p=int : a integer to specify the projection to show (number of changings from default position (may be negative))
 
 
 ## List of computed projections
